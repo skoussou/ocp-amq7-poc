@@ -11,6 +11,7 @@
 === STAGE 1: Define Success Criteria
 
 
+---
 
 
 == STAGE 2:  Install Broker in Clustered (SSL) and Persistent Mode (3 PODs) (This to be defined)
@@ -26,6 +27,7 @@
 - Scale-Down controller has to be installed as well to monitor PVCs
 
 
+---
 
 
 == STAGE 3:  Client/Consumers for injgestion of data

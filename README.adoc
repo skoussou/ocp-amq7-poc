@@ -3,7 +3,6 @@
 
 
 == STAGE 1:  Install all necessary components (templates, images/streams)
----
 
 === STAGE 1: Define Pre-Requisites 
 
@@ -14,12 +13,7 @@
 
 
 
-
-
-
 == STAGE 2:  Install Broker in Clustered (SSL) and Persistent Mode (3 PODs) (This to be defined)
----
-
 
 === STAGE 2:  Define Pre-Requisites 
 - Compatible Storage available in the cluster
@@ -35,7 +29,6 @@
 
 
 == STAGE 3:  Client/Consumers for injgestion of data
----
 
 === STAGE 3:  Define Pre-Requisites 
 - 

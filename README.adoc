@@ -49,6 +49,17 @@ for template in amq-broker-72-basic.yaml \
 
 === STAGE 2: Activities
 
+* Activity 1: Install ScaleDown controller in namespace *amq-pocs*
+
+[source, bash]
+----
+oc create -n amq-pocs -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
+deployment.apps/amq-broker-72-scaledown-controller-openshift-deployment created
+serviceaccount/amq-broker-72-scaledown-controller-openshift-sa created
+role.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-role created
+rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-rb created
+----
+
 === STAGE 2:  Define Success Criteria
 - Define Destinations (check they are there) Topics/Queues
 - Scale-Down controller has to be installed as well to monitor PVCs
@@ -57,7 +68,7 @@ for template in amq-broker-72-basic.yaml \
 ---
 
 
-== STAGE 3:  Client/Consumers for injgestion of data
+== STAGE 3:  Client/Consumers for ingestion of data
 
 === STAGE 3:  Define Pre-Requisites 
 - 
@@ -68,6 +79,31 @@ for template in amq-broker-72-basic.yaml \
 === STAGE 3:  Define Success Criteria
 
 - 
+
+
+
+---
+
+
+== STAGE 4:  How to Handle HA & Scale Downs
+
+=== STAGE 3:  Define Pre-Requisites 
+- 
+
+=== STAGE 3: Activities
+- Actvitiy 1: Installing Scaledown Controller
+
+
+link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#install-journal-recovery-broker-ocp[7.1. Installing the scaledown controller]
+link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#using_pod_draining_broker-ocp[7.2. Using the scaledown controller]
+
+
+
+
+=== STAGE 3:  Define Success Criteria
+
+- 
+
 
 
 

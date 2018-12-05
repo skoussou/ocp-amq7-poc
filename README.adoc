@@ -17,6 +17,24 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
 ----
 
+* Activity 2: Install AMQ Templates in namespace *openshift*
+
+[source, bash]
+----
+for template in amq-broker-72-basic.yaml \
+ amq-broker-72-ssl.yaml \
+ amq-broker-72-custom.yaml \
+ amq-broker-72-persistence.yaml \
+ amq-broker-72-persistence-ssl.yaml \
+ amq-broker-72-persistence-clustered.yaml \
+ amq-broker-72-persistence-clustered-ssl.yaml;
+ do
+  oc replace --force -f \
+ https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/${template} -n openshift
+  done
+----
+
+
 === STAGE 1: Define Success Criteria
 
 

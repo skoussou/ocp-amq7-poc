@@ -35,6 +35,7 @@ for template in amq-broker-72-basic.yaml \
 ----
 
 
+
 === STAGE 1: Define Success Criteria
 
 
@@ -48,6 +49,37 @@ for template in amq-broker-72-basic.yaml \
 - Enough Resources
 
 === STAGE 2: Activities
+
+* Activity 1: Create namespce *amq-pocs" to host all AMQ7 required objects
+
+[souce, bash]
+----
+oc login <CLUSTER-URL> -u <USERNAME> -p <PASSWORD>
+oc new-project amq-pocs
+----
+
+* Activity 2: Create certificates for SSL access on AMQ7 Broker
+** Existing certs can be found here for the secret link:certs
+[souce, bash]
+----
+-rw-rw-r--. 1 stkousso stkousso  893 Dec  4 17:32 broker_cert
+-rw-rw-r--. 1 stkousso stkousso 2246 Dec  4 17:32 broker.ks
+-rw-rw-r--. 1 stkousso stkousso  956 Dec  4 17:33 broker.ts
+-rw-rw-r--. 1 stkousso stkousso  893 Dec  4 17:33 client_cert
+-rw-rw-r--. 1 stkousso stkousso 2246 Dec  4 17:32 client.ks
+-rw-rw-r--. 1 stkousso stkousso  956 Dec  4 17:33 client.ts
+-rwxr-xr-x. 1 stkousso stkousso 1693 Dec  4 17:29 create-ssl-amq.sh
+----
+** Alternatively create new ones with script link:certs/create-ssl-amq.sh
+[souce, bash]
+----
+certs/create-ssl-amq.sh
+----
+
+* Activity 3: Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+
+
+
 
 * Activity 1: Install ScaleDown controller in namespace *amq-pocs*
 

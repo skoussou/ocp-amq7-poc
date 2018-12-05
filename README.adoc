@@ -8,6 +8,15 @@
 
 === STAGE 1: Activities
 
+* Activity 1: Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
+
+[source, bash]
+----
+oc login -u system:admin
+oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-image-streams.yaml -n openshift
+oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
+----
+
 === STAGE 1: Define Success Criteria
 
 

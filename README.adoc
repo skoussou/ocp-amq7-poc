@@ -97,80 +97,65 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 
 
 * [underline]#Activity 4a:# Deploying a basic broker with persistence and SSL
+* 
+
+* [underline]#Activity 4b:# Deploying a broker with custom configuration
+* 
 
 
+* [underline]#Activity 4c:# Deploying a set of clustered SSL brokers
+** Create AMQ7 Broker Application with Stateful Sets utilizing template "" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
 
-
-
-
-* [underline]#Activity 4b:# Deploying a set of clustered SSL brokers
-
-
-.Using Template amq-broker-72-persistence-clustered-ssl with parameters
-[options="header,footer"]
-|=============================================================================
-|Environment variable|Display Name      |Value    |            Description
-|AMQ_PROTOCOL    |AMQ Protocols     |openwire,amqp,stomp,mqtt,hornetq        |The protocols to be accepted by the broker
-|AMQ_QUEUES    |Queues     |demoQueue        |Creates an anycast queue called demoQueue. Queue names, separated by commas. These queues will be automatically
-    created when the broker starts. If left empty, queues will be still created dynamically.
-|AMQ_ADDRESSES    |Addresses     |demoTopic        |Creates a multicast address (or topic) called demoTopic. Address names, separated by commas. These addresses will be automatically
-    created when the broker starts. If left empty, addresses will be still created dynamically
-|VOLUME_CAPACITY    |AMQ Volume Size|1Gi        | The persistent volume size created for the journal used by AMQ for persisting messages.
-|AMQ_CLUSTERED    |Clustered|true        | This needs to be true to ensure the brokers cluster
-|AMQ_CLUSTER_USER    |cluster user          |generated        |The username the brokers use to connect with each other 
-|AMQ_CLUSTER_PASSWORD    |cluster password          |generated        | The password the brokers use to connect with each other
-|AMQ_USER    |AMQ Username          |amq-demo-user        | The username the client uses (user[a-zA-Z0-9]{3})
-|AMQ_PASSWORD    |AMQ Password          |amqDemoPassword        | The password the client uses with the username ('[a-zA-Z0-9]{8}')
-|AMQ_TRUSTSTORE_PASSWORD    |AMQ Truststore Password          |broker        | The password used when creating the Truststore
-|AMQ_KEYSTORE_PASSWORD    |AMQ Keystore Password          |broker        | The password used when creating the Keystore 
-|-    | -          | -        | -
-|-    | -          | -        | -
-|-    | -          | -        | -
-|-    | -          | -        | -
-|APPLICATION_NAME    | Application Name          | amq        | The name for the application.
-|AMQ_ROLE    | AMQ Role          |admin        | User role for standard broker user.
-|AMQ_NAME    | AMQ Name          |broker        | The name of the broker
-|AMQ_REPLICAS    | Number of Replicas          | "0"        | Number of broker replicas for a cluster
-|AMQ_GLOBAL_MAX_SIZE    | AMQ Global Max Size          | -        | 'Maximum amount of memory which message data may consume (Default: Undefined, half of the system''s memory).'
-|AMQ_REQUIRE_LOGIN    | AMQ Require Login          | -        | Determines whether or not the broker will allow anonymous access, or require login
-|AMQ_SECRET    | Secret Name          | amq-app-secret        | Name of a secret containing SSL related files 
-|AMQ_TRUSTSTORE    | Trust Store Filename          | broker.ts        | SSL trust store filename
-|AMQ_KEYSTORE    | AMQ Keystore Filename          | broker.ks        | SSL key store filename
-|AMQ_DATA_DIR    | AMQ Data Directory          | /opt/amq/data        | The directory to use for data storage
-|AMQ_DATA_DIR_LOGGING    | AMQ Data Directory for logging          | "true"        | Use the AMQ Data Directory for logging
-|-    | -          | -        | -
-|-    | -          | -        | -
-|-    | -          | -        | -
-|-    | -          | -        | -
-|AMQ_EXTRA_ARGS    | -          | -        | Extra arguments for broker creation
-|AMQ_ANYCAST_PREFIX    | AMQ Anycast Prefix          | -        | Anycast prefix applied to the multiplexed protocol ports 61616 and 61617
-|AMQ_MULTICAST_PREFIX    | AMQ Multicast Prefix          | -        | Multicast prefix applied to the multiplexed protocol ports 61616 and 61617
-|IMAGE    | Image          | registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.        | Broker Image
-|=============================================================================
-
-Extra parameters to consier
-[source,bash]
+[source, bash]
 ----
-- description: Clustered user
-  displayName: cluster user
-  from: user[a-zA-Z0-9]{3}
-  generate: expression
-  name: AMQ_CLUSTER_USER
-- description: Clustered password
-  displayName: cluster password
-  from: '[a-zA-Z0-9]{8}'
-  generate: expression
-  name: AMQ_CLUSTER_PASSWORD
+oc new-app --template=amq-broker-72-persistence-clustered-ssl \
+    -p=APPLICATION_NAME=broker \
+    -p=AMQ_ROLE=admin \
+    -p=AMQ_NAME=broker \
+    -p=AMQ_REPLICAS="0" \
+    -p=AMQ_SECRET=amq-app-secret \
+    -p=AMQ_TRUSTSTORE=broker.ts \
+    -p=AMQ_KEYSTORE=broker.ks \
+    -p=AMQ_DATA_DIR=/opt/amq/data \
+    -p=AMQ_DATA_DIR_LOGGING="true" \
+    -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
+    -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
+    -p=AMQ_QUEUES=demoQueue \
+    -p=AMQ_ADDRESSES=demoTopic \
+    -p=VOLUME_CAPACITY=1Gi \
+    -p=AMQ_CLUSTERED="true" \
+    -p=AMQ_USER=amq-demo-user \
+    -p=AMQ_PASSWORD=amqDemoPassword \
+    -p=AMQ_TRUSTSTORE_PASSWORD=broker \
+    -p=AMQ_KEYSTORE_PASSWORD=broker \
+    -n amq-pocs
+---
+
+** Scale up the pods to three to create a cluster of brokers.
+[source, bash]
+----  
+oc scale statefulset broker-amq --replicas=3
 ----
 
-*COMMAND TO CREATE OBJECTS BASED ON PARAMS AND TEMPLATE*
-	
+and verify that pods are running
 
+[source, bash]
+----  
+ Check that there are three pods running.
 
+sh-4.2$ jboss-amq-7-broker-openshift-image]$ oc get pods
+NAME           READY     STATUS    RESTARTS   AGE
+broker-amq-0   1/1       Running   0          33m
+broker-amq-1   1/1       Running   0          33m
+broker-amq-2   1/1       Running   0          29m
+----
 
+Verify the brokers have clustered with the new pod by checking the logs.
 
-
-
+[source, bash]
+----  
+sh-4.2$ jboss-amq-7-broker-openshift-image]$ oc logs broker-amq-2
+----
 
 * [underline]#Activity 5:# Create an SSL Route
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]

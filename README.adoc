@@ -1,46 +1,47 @@
-#########################################################
-#							#
-#		POC ACTIVITIES				#
-#							#
-#########################################################
+=POC ACTIVITIES
+
+----
+
+== STAGE 1:  Install all necessary components (templates, images/streams)
+
+=== STAGE 1: Define Pre-Requisites 
+
+=== STAGE 1: Activities
+
+=== STAGE 1: Define Success Criteria
 
 
 
-==============================================================================
-STAGE 1:	Install all necessary components (templates, images/streams)
-==============================================================================
-
-Define Success Criteria
-------------------------------------------------------------------
-
-Define Pre-Requisites Criteria
-------------------------------------------------------------------
 
 
+----
 
-==============================================================================
-STAGE 2:	Install Broker in Clustered (SSL) and Persistent Mode (3 PODs) ---> This to be defined
-==============================================================================
+== STAGE 2:  Install Broker in Clustered (SSL) and Persistent Mode (3 PODs) ---> This to be defined
 
-Define Success Criteria
-------------------------------------------------------------------
-- Define Destinations (check they are there) Topics/Queues
-- Scale-Down controller has to be installed as well to monitor PVCs
-
-Define Pre-Requisites Criteria
-------------------------------------------------------------------
+=== STAGE 2:  Define Pre-Requisites 
 - Compatible Storage available in the cluster
 - Enough Resources
 
+=== STAGE 2: Activities
+
+=== STAGE 2:  Define Success Criteria
+- Define Destinations (check they are there) Topics/Queues
+- Scale-Down controller has to be installed as well to monitor PVCs
 
 
-==============================================================================
-STAGE 3:	Client/Consumers for injgestion of data
-==============================================================================
 
-Define Success Criteria
-------------------------------------------------------------------
+
+== STAGE 3:  Client/Consumers for injgestion of data
+
+=== STAGE 3:  Define Pre-Requisites 
 - 
 
-Define Pre-Requisites Criteria
-------------------------------------------------------------------
+=== STAGE 3: Activities
+- 
+
+=== STAGE 3:  Define Success Criteria
+
+- 
+
+
+

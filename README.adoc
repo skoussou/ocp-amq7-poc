@@ -1,0 +1,46 @@
+#########################################################
+#							#
+#		POC ACTIVITIES				#
+#							#
+#########################################################
+
+
+
+==============================================================================
+STAGE 1:	Install all necessary components (templates, images/streams)
+==============================================================================
+
+Define Success Criteria
+------------------------------------------------------------------
+
+Define Pre-Requisites Criteria
+------------------------------------------------------------------
+
+
+
+==============================================================================
+STAGE 2:	Install Broker in Clustered (SSL) and Persistent Mode (3 PODs) ---> This to be defined
+==============================================================================
+
+Define Success Criteria
+------------------------------------------------------------------
+- Define Destinations (check they are there) Topics/Queues
+- Scale-Down controller has to be installed as well to monitor PVCs
+
+Define Pre-Requisites Criteria
+------------------------------------------------------------------
+- Compatible Storage available in the cluster
+- Enough Resources
+
+
+
+==============================================================================
+STAGE 3:	Client/Consumers for injgestion of data
+==============================================================================
+
+Define Success Criteria
+------------------------------------------------------------------
+- 
+
+Define Pre-Requisites Criteria
+------------------------------------------------------------------

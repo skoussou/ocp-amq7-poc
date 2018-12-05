@@ -8,7 +8,7 @@
 
 === STAGE 1: Activities
 
-* _Activity 1: Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
+* * [underline]#Activity 1:# Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
 
 [source, bash]
 ----
@@ -17,7 +17,7 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
 ----
 
-* _Activity 2: Install AMQ Templates in namespace *openshift*
+* * [underline]#Activity 2:# Install AMQ Templates in namespace *openshift*
 
 [source, bash]
 ----
@@ -50,7 +50,7 @@ for template in amq-broker-72-basic.yaml \
 
 === STAGE 2: Activities
 
-* _Activity 1: Create namespce *amq-pocs" to host all AMQ7 required objects
+* * [underline]#Activity 1:# Create namespce *amq-pocs" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -58,7 +58,7 @@ oc login <CLUSTER-URL> -u <USERNAME> -p <PASSWORD>
 oc new-project amq-pocs
 ----
 
-* _Activity 2: Create certificates for SSL access on AMQ7 Broker
+* * [underline]#Activity 2:# Create certificates for SSL access on AMQ7 Broker
 ** Existing certs can be found here for the secret link:certs[]
 ** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
 
@@ -67,7 +67,7 @@ oc new-project amq-pocs
 certs/create-ssl-amq.sh
 ----
 
-* _Activity 3: Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+* * [underline]#Activity 3:# Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
 
 [souce, bash]
 ----
@@ -75,7 +75,7 @@ oc create secret generic amq-broker-secret --from-file=./certs/broker.ks --from-
 oc secrets add sa/<APPLICATION_NAME> secret/amq-broker-secret
 ----
 
-* _Activity 4: Install ScaleDown controller in namespace *amq-pocs*
+* * [underline]#Activity 4:# Install ScaleDown controller in namespace *amq-pocs*
 
 [source, bash]
 ----
@@ -87,7 +87,7 @@ rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshi
 ----
 
 
-* [Activity 5:]#Underline Create SSL Route
+* [underline]#Activity 5:# Create SSL Route
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
 
 
@@ -122,14 +122,15 @@ rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshi
 * 
 
 === STAGE 3: Activities
-* _Actvitiy 1: Installing Scaledown Controller
+
+* [underline]#Activity 1:# Installing Scaledown Controller
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#install-journal-recovery-broker-ocp[7.1. Installing the scaledown controller]
 
 
-* _Activity 2: Configure ScaleDown Controller
+* [underline]#Activity 2:# Configure ScaleDown Controller
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#using_pod_draining_broker-ocp[7.2. Using the scaledown controller]
 
-* _Activity 3: 
+* [underline]#Activity 3:# 
 
 
 

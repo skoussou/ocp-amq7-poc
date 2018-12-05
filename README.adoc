@@ -129,28 +129,28 @@ oc new-app --template=amq-broker-72-persistence-clustered-ssl \
     -p=AMQ_TRUSTSTORE_PASSWORD=broker \
     -p=AMQ_KEYSTORE_PASSWORD=broker \
     -n amq-pocs
----
+----
 
-** Scale up the pods to three to create a cluster of brokers.
+  ** Scale up the pods to three to create a cluster of brokers.
+
 [source, bash]
 ----  
 oc scale statefulset broker-amq --replicas=3
 ----
 
-and verify that pods are running
+  ** and verify that pods are running
 
 [source, bash]
 ----  
- Check that there are three pods running.
+oc get pods
 
-sh-4.2$ jboss-amq-7-broker-openshift-image]$ oc get pods
 NAME           READY     STATUS    RESTARTS   AGE
 broker-amq-0   1/1       Running   0          33m
 broker-amq-1   1/1       Running   0          33m
 broker-amq-2   1/1       Running   0          29m
 ----
 
-Verify the brokers have clustered with the new pod by checking the logs.
+  ** Verify the brokers have clustered with the new pod by checking the logs.
 
 [source, bash]
 ----  

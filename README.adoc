@@ -47,6 +47,7 @@ for template in amq-broker-72-basic.yaml \
 === STAGE 2:  Define Pre-Requisites 
 - Compatible Storage available in the cluster
 - Enough Resources
+- ROUTER to allow wildcard for subdomains see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]
 
 === STAGE 2: Activities
 
@@ -104,8 +105,7 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 
 
 * [underline]#Activity 4c:# Deploying a set of clustered SSL brokers
-** Create AMQ7 Broker Application with Stateful Sets utilizing template "" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
-
+** Create AMQ7 Broker Application with Stateful Sets utilizing template "amq-broker-72-persistence-clustered-ssl" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
 [source, bash]
 ----
 oc new-app --template=amq-broker-72-persistence-clustered-ssl \
@@ -130,16 +130,12 @@ oc new-app --template=amq-broker-72-persistence-clustered-ssl \
     -p=AMQ_KEYSTORE_PASSWORD=broker \
     -n amq-pocs
 ----
-
-  ** Scale up the pods to three to create a cluster of brokers.
-
+** Scale up the pods to three to create a cluster of brokers.
 [source, bash]
 ----  
 oc scale statefulset broker-amq --replicas=3
 ----
-
-  ** and verify that pods are running
-
+** and verify that pods are running
 [source, bash]
 ----  
 oc get pods
@@ -149,29 +145,19 @@ broker-amq-0   1/1       Running   0          33m
 broker-amq-1   1/1       Running   0          33m
 broker-amq-2   1/1       Running   0          29m
 ----
-
-  ** Verify the brokers have clustered with the new pod by checking the logs.
-
+** Verify the brokers have clustered with the new pod by checking the logs.
 [source, bash]
 ----  
-sh-4.2$ jboss-amq-7-broker-openshift-image]$ oc logs broker-amq-2
+oc logs broker-amq-2
 ----
 
 * [underline]#Activity 5:# Create an SSL Route
-** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
+** Option A: Single Broker installation
+*** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
 
+    Note: Only one broker can be scaled up. You cannot scale up multiple brokers.
 
-
-
-8.5.3. Creating a route
-
-Create a route for the broker so that clients outside of OpenShift Container Platform can connect using SSL. By default, the broker protocols are available through the 61617/TCP port.
-Note
-
-Only one broker can be scaled up. You cannot scale up multiple brokers.
-
-Procedure
-
+    Procedure:
     From the Services menu choose broker-amq-tcp-ssl
     From the Action menu and choose Create a route .
     Select the Secure route check box to display the TLS parameters.
@@ -181,11 +167,41 @@ Procedure
 
     https://broker-amq-tcp-amq-demo.router.default.svc.cluster.local
 
-This hostname will be used by external clients to connect to the broker using SSL with SNI.
+    This hostname will be used by external clients to connect to the broker using SSL with SNI.
 
-Additional resources
 
-    For more information on routes in the OpenShift Container Platform, see Routes. 
+
+** Option B: Clustered Broker installation
+*** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#exposing_the_brokers[8.10.1. Exposing the brokers]
+     Exposing the brokers
+*** [red]*PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]
+*** Route Configuration
+     Configure the brokers so that the cluster of brokers are externally available and can be connected to directly, bypassing the OpenShift router. This is done by creating a route that exposes each pod using its own hostname. 
+
+Note: The important configuration here is the wildcard policy of Subdomain. This allows each broker to be accessible through its own hostname. 
+
+[source, bash]
+----
+echo 'apiVersion: v1
+kind: Route
+metadata:
+  labels:
+    app: broker-amq
+    application: broker-amq
+  name: tcp-ssl
+spec:
+  port:
+    targetPort: all-ssl
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: broker-amq-headless
+    weight: 100
+  wildcardPolicy: Subdomain
+  host: star.broker-amq-headless.amq-demo.svc' | oc create -f - -n amq-pocs
+----
+
 
 
 

@@ -58,7 +58,10 @@ oc login <CLUSTER-URL> -u <USERNAME> -p <PASSWORD>
 oc new-project amq-pocs
 ----
 
-* * [underline]#Activity 2:# Create certificates for SSL access on AMQ7 Broker
+
+
+
+* [underline]#Activity 2:# Create certificates for SSL access on AMQ7 Broker
 
 ** Existing certs can be found here for the secret link:certs[]
 ** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
@@ -68,6 +71,10 @@ oc new-project amq-pocs
 ./certs/create-ssl-amq.sh
 ----
 
+
+
+
+
 * [underline]#Activity 3:# Create Service Account for the AMQ Broker deployment, Secrets based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
 ** You can run also sript from echo link:scripts/setup_sa_secrets_assign.sh[]
 [souce, bash]
@@ -75,17 +82,13 @@ oc new-project amq-pocs
 echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "amq-service-account"}}' | oc create -f -
 
 # Add the view role to the service account. The view role enables the service account to view all the resources in the amq-demo namespace, which is necessary for managing the cluster when using the OpenShift dns-ping protocol for discovering the mesh endpoints.
-
 oc policy add-role-to-user view system:serviceaccount:amq-pocs:amq-service-account
 
-
 # Use the broker keystore file to create the AMQ Broker secret:
-
 # oc secrets new amq-app-secret broker.ks
 oc create secret generic amq-app-secret --from-file=./certs/broker.ks --from-file=./certs/broker.ts
 
 # Add the secret to the service account created earlier:
-
 oc secrets add sa/amq-service-account secret/amq-app-secret
 ----
 
@@ -93,6 +96,75 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 
 
 
+* [underline]#Activity 4a:# Deploying a basic broker with persistence and SSL
+
+
+
+
+
+
+* [underline]#Activity 4b:# Deploying a set of clustered SSL brokers
+
+
+.Using Template amq-broker-72-persistence-clustered-ssl with parameters
+[options="header,footer"]
+|=============================================================================
+|Environment variable|Display Name      |Value    | Description
+|AMQ_PROTOCOL    |AMQ Protocols     |openwire,amqp,stomp,mqtt,hornetq        |The protocols to be accepted by the broker
+|AMQ_QUEUES    |Queues     |demoQueue        |Creates an anycast queue called demoQueue. Queue names, separated by commas. These queues will be automatically
+    created when the broker starts. If left empty, queues will be still created dynamically.
+|AMQ_ADDRESSES    |Addresses     |demoTopic        |Creates a multicast address (or topic) called demoTopic. Address names, separated by commas. These addresses will be automatically
+    created when the broker starts. If left empty, addresses will be still created dynamically
+|VOLUME_CAPACITY    |AMQ Volume Size|1Gi        | The persistent volume size created for the journal used by AMQ for persisting messages.
+|AMQ_CLUSTERED    |Clustered|true        | This needs to be true to ensure the brokers cluster
+|AMQ_CLUSTER_USER    |cluster user          |generated        |The username the brokers use to connect with each other 
+|AMQ_CLUSTER_PASSWORD    |cluster password          |generated        | The password the brokers use to connect with each other
+|AMQ_USER    |AMQ Username          |amq-demo-user        | The username the client uses (user[a-zA-Z0-9]{3})
+|AMQ_PASSWORD    |AMQ Password          |amqDemoPassword        | The password the client uses with the username ('[a-zA-Z0-9]{8}')
+|AMQ_TRUSTSTORE_PASSWORD    |AMQ Truststore Password          |broker        | The password used when creating the Truststore
+|AMQ_KEYSTORE_PASSWORD    |AMQ Keystore Password          |broker        | The password used when creating the Keystore 
+|-    | -          | -        | -
+|-    | -          | -        | -
+|-    | -          | -        | -
+|-    | -          | -        | -
+|APPLICATION_NAME    | Application Name          | amq        | The name for the application.
+|AMQ_ROLE    | AMQ Role          |admin        | User role for standard broker user.
+|AMQ_NAME    | AMQ Name          |broker        | The name of the broker
+|AMQ_REPLICAS    | Number of Replicas          | "0"        | Number of broker replicas for a cluster
+|AMQ_GLOBAL_MAX_SIZE    | AMQ Global Max Size          | -        | 'Maximum amount of memory which message data may consume (Default: Undefined, half of the system''s memory).'
+|AMQ_REQUIRE_LOGIN    | AMQ Require Login          | -        | Determines whether or not the broker will allow anonymous access, or require login
+|AMQ_SECRET    | Secret Name          | amq-app-secret        | Name of a secret containing SSL related files 
+|AMQ_TRUSTSTORE    | Trust Store Filename          | broker.ts        | SSL trust store filename
+|AMQ_KEYSTORE    | AMQ Keystore Filename          | broker.ks        | SSL key store filename
+|AMQ_DATA_DIR    | AMQ Data Directory          | /opt/amq/data        | The directory to use for data storage
+|AMQ_DATA_DIR_LOGGING    | AMQ Data Directory for logging          | "true"        | Use the AMQ Data Directory for logging
+|-    | -          | -        | -
+|-    | -          | -        | -
+|-    | -          | -        | -
+|-    | -          | -        | -
+|AMQ_EXTRA_ARGS    | -          | -        | Extra arguments for broker creation
+|AMQ_ANYCAST_PREFIX    | AMQ Anycast Prefix          | -        | Anycast prefix applied to the multiplexed protocol ports 61616 and 61617
+|AMQ_MULTICAST_PREFIX    | AMQ Multicast Prefix          | -        | Multicast prefix applied to the multiplexed protocol ports 61616 and 61617
+|IMAGE    | Image          | registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.        | Broker Image
+|=============================================================================
+
+Extra parameters to consier
+[source,bash]
+----
+- description: Clustered user
+  displayName: cluster user
+  from: user[a-zA-Z0-9]{3}
+  generate: expression
+  name: AMQ_CLUSTER_USER
+- description: Clustered password
+  displayName: cluster password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: AMQ_CLUSTER_PASSWORD
+----
+
+*COMMAND TO CREATE OBJECTS BASED ON PARAMS AND TEMPLATE*
+	
 
 
 
@@ -100,12 +172,90 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 
 
 
-
-* [underline]#Activity 1:# Install ScaleDown controller in namespace *amq-pocs*
-
-
-* [underline]#Activity 5:# Create SSL Route
+* [underline]#Activity 5:# Create an SSL Route
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
+
+
+
+
+8.5.3. Creating a route
+
+Create a route for the broker so that clients outside of OpenShift Container Platform can connect using SSL. By default, the broker protocols are available through the 61617/TCP port.
+Note
+
+Only one broker can be scaled up. You cannot scale up multiple brokers.
+
+Procedure
+
+    From the Services menu choose broker-amq-tcp-ssl
+    From the Action menu and choose Create a route .
+    Select the Secure route check box to display the TLS parameters.
+    From the TLS Termination drop-down menu, choose Passthrough. This selection relays all communication to AMQ Broker without the OpenShift router decrypting and resending it.
+
+    View the route by going to the routes menu. For example:
+
+    https://broker-amq-tcp-amq-demo.router.default.svc.cluster.local
+
+This hostname will be used by external clients to connect to the broker using SSL with SNI.
+
+Additional resources
+
+    For more information on routes in the OpenShift Container Platform, see Routes. 
+
+
+
+* [underline]#Activity 5:# Creating a route for the management console
+
+
+
+
+
+8.6.4. Creating a route for the management console
+
+The clustering templates do not expose the console by default. This is because the the OpenShift proxy would load balance around each broker in the cluster and it would not be possible to control which broker console is connected.
+Note
+
+In future releases each pod will have its own integrated console available through the use of the pod. It uses wildcard routing to expose each broker on its own hostname.
+
+Procedure
+
+    Choose import YAML/JSON from Add to Project drop down
+
+    Enter the following and click create:
+
+    apiVersion: v1
+    kind: Route
+    metadata:
+      labels:
+        app: broker-amq
+        application: broker-amq
+      name: console-jolokia
+    spec:
+      port:
+        targetPort: console-jolokia
+      to:
+        kind: Service
+        name: broker-amq-headless
+        weight: 100
+      wildcardPolicy: Subdomain
+      host: star.broker-amq-headless.amq-demo.svc
+
+    Note
+
+    The important configuration here is host: star.broker-amq-headless.amq-demo.svc. This is the hostname used for each pod in the broker. The star is replaced by the pod name, so if the pod name is broker-amq-0 , the hostname is broker-amq-0.broker-amq-headless.amq-demo.svc
+
+    Add an entry into your /etc/hosts file to map the route name onto the IP address of the OpenShift cluster:
+
+    10.0.0.1 broker-amq-0.broker-amq-headless.amq-demo.svc
+
+    Navigate to the console using the address http://broker-amq-0.broker-amq-headless.amq-demo.svc in a browser. 
+
+
+
+
+
+
+
 
 
 === STAGE 2:  Define Success Criteria

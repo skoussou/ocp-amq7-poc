@@ -106,50 +106,57 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 
 * [underline]#Activity 4c:# Deploying a set of clustered SSL brokers
 ** Create AMQ7 Broker Application with Stateful Sets utilizing template "amq-broker-72-persistence-clustered-ssl" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
-[source, bash]
-----
-oc new-app --template=amq-broker-72-persistence-clustered-ssl \
-    -p=APPLICATION_NAME=broker \
-    -p=AMQ_ROLE=admin \
-    -p=AMQ_NAME=broker \
-    -p=AMQ_REPLICAS="0" \
-    -p=AMQ_SECRET=amq-app-secret \
-    -p=AMQ_TRUSTSTORE=broker.ts \
-    -p=AMQ_KEYSTORE=broker.ks \
-    -p=AMQ_DATA_DIR=/opt/amq/data \
-    -p=AMQ_DATA_DIR_LOGGING="true" \
-    -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
-    -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
-    -p=AMQ_QUEUES=demoQueue \
-    -p=AMQ_ADDRESSES=demoTopic \
-    -p=VOLUME_CAPACITY=1Gi \
-    -p=AMQ_CLUSTERED="true" \
-    -p=AMQ_USER=amq-demo-user \
-    -p=AMQ_PASSWORD=amqDemoPassword \
-    -p=AMQ_TRUSTSTORE_PASSWORD=broker \
-    -p=AMQ_KEYSTORE_PASSWORD=broker \
-    -n amq-pocs
-----
-** Scale up the pods to three to create a cluster of brokers.
-[source, bash]
-----  
-oc scale statefulset broker-amq --replicas=3
-----
-** and verify that pods are running
-[source, bash]
-----  
-oc get pods
 
-NAME           READY     STATUS    RESTARTS   AGE
-broker-amq-0   1/1       Running   0          33m
-broker-amq-1   1/1       Running   0          33m
-broker-amq-2   1/1       Running   0          29m
-----
+    [source, bash]
+    ----
+    oc new-app --template=amq-broker-72-persistence-clustered-ssl \
+        -p=APPLICATION_NAME=broker \
+        -p=AMQ_ROLE=admin \
+        -p=AMQ_NAME=broker \
+        -p=AMQ_REPLICAS="0" \
+        -p=AMQ_SECRET=amq-app-secret \
+        -p=AMQ_TRUSTSTORE=broker.ts \
+        -p=AMQ_KEYSTORE=broker.ks \
+        -p=AMQ_DATA_DIR=/opt/amq/data \
+        -p=AMQ_DATA_DIR_LOGGING="true" \
+        -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
+        -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
+        -p=AMQ_QUEUES=demoQueue \
+        -p=AMQ_ADDRESSES=demoTopic \
+        -p=VOLUME_CAPACITY=1Gi \
+        -p=AMQ_CLUSTERED="true" \
+        -p=AMQ_USER=amq-demo-user \
+        -p=AMQ_PASSWORD=amqDemoPassword \
+        -p=AMQ_TRUSTSTORE_PASSWORD=broker \
+        -p=AMQ_KEYSTORE_PASSWORD=broker \
+        -n amq-pocs
+    ----
+
+** Scale up the pods to three to create a cluster of brokers.
+
+    [source, bash]
+    ----  
+    oc scale statefulset broker-amq --replicas=3
+    ----
+
+** and verify that pods are running
+
+    [source, bash]
+    ----  
+    oc get pods
+    
+    NAME           READY     STATUS    RESTARTS   AGE
+    broker-amq-0   1/1       Running   0          33m
+    broker-amq-1   1/1       Running   0          33m
+    broker-amq-2   1/1       Running   0          29m
+    ----
+
 ** Verify the brokers have clustered with the new pod by checking the logs.
-[source, bash]
-----  
-oc logs broker-amq-2
-----
+
+    [source, bash]
+    ----  
+    oc logs broker-amq-2
+    ----
 
 * [underline]#Activity 5:# Create an SSL Route
 ** Option A: Single Broker installation
@@ -174,7 +181,7 @@ oc logs broker-amq-2
 ** Option B: Clustered Broker installation
 *** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#exposing_the_brokers[8.10.1. Exposing the brokers]
      Exposing the brokers
-*** [red]*PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]
+*** [red]*PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]  (login as admin and in default project apply oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true)
 *** Route Configuration
      Configure the brokers so that the cluster of brokers are externally available and can be connected to directly, bypassing the OpenShift router. This is done by creating a route that exposes each pod using its own hostname. 
 
@@ -205,18 +212,15 @@ spec:
 
 
 
-* [underline]#Activity 5:# Creating a route for the management console
 
-
-
+* [underline]#Activity 6:# Creating a route for the management console
 
 
 8.6.4. Creating a route for the management console
 
-The clustering templates do not expose the console by default. This is because the the OpenShift proxy would load balance around each broker in the cluster and it would not be possible to control which broker console is connected.
-Note
+The clustering templates do not expose the console by default. This is because the OpenShift proxy would load balance around each broker in the cluster and it would not be possible to control which broker console is connected.
 
-In future releases each pod will have its own integrated console available through the use of the pod. It uses wildcard routing to expose each broker on its own hostname.
+Note: In future releases each pod will have its own integrated console available through the use of the pod. It uses wildcard routing to expose each broker on its own hostname.
 
 Procedure
 
@@ -250,6 +254,29 @@ Procedure
     10.0.0.1 broker-amq-0.broker-amq-headless.amq-demo.svc
 
     Navigate to the console using the address http://broker-amq-0.broker-amq-headless.amq-demo.svc in a browser. 
+
+
+
+
+
+
+
+
+
+
+
+
+* [underline]#Activity 7:# Connecting External Clients via SubDomains
+** Add entries into the /etc/hosts file to map the route name onto the actual IP addresses of the brokers (ie. the IP address of the OpenShift cluster):
+	
+    # 10.0.0.1 broker-amq-0.broker-ssl-amq-headless.amq-demo.svc broker-amq-1.broker-ssl-amq-headless.amq-demo.svc broker-amq-2.broker-ssl-amq-headless.amq-demo.svc
+    192.168.42.196 broker-amq-0.broker-amq-headless.amq-pocs.svc broker-amq-1.broker-amq-headless.amq-pocs.svc broker-amq-2.broker-amq-headless.amq-pocs.svc
+
+** Update the jndi.properties configuration file of the client to use the route, truststore, and keystore created previously, for example:
+
+    connectionfactory.myFactoryLookup = amqps://broker-amq-0.broker-ssl-amq-headless.amq-demo.svc:443?transport.keyStoreLocation=/home/ataylor/projects/jboss-amq-7-broker-openshift-image/ client.ks&transport.keyStorePassword=password&transport.trustStoreLocation=/home/ataylor/projects/jboss-amq-7-broker-openshift-image/client.ts&transport.trustStorePassword=password&transport.verifyHost=false
+
+
 
 
 

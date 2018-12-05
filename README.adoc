@@ -50,7 +50,7 @@ for template in amq-broker-72-basic.yaml \
 
 === STAGE 2: Activities
 
-* * [underline]#Activity 1:# Create namespce *amq-pocs" to host all AMQ7 required objects
+* [underline]#Activity 1:# Create namespce *amq-pocs" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -59,32 +59,49 @@ oc new-project amq-pocs
 ----
 
 * * [underline]#Activity 2:# Create certificates for SSL access on AMQ7 Broker
+
 ** Existing certs can be found here for the secret link:certs[]
 ** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
 
 [souce, bash]
 ----
-certs/create-ssl-amq.sh
+./certs/create-ssl-amq.sh
 ----
 
-* * [underline]#Activity 3:# Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
-
+* [underline]#Activity 3:# Create Service Account for the AMQ Broker deployment, Secrets based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+** You can run also sript from echo link:scripts/setup_sa_secrets_assign.sh[]
 [souce, bash]
 ----
-oc create secret generic amq-broker-secret --from-file=./certs/broker.ks --from-file=./certs/broker.ts
-oc secrets add sa/<APPLICATION_NAME> secret/amq-broker-secret
+echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "amq-service-account"}}' | oc create -f -
+
+# Add the view role to the service account. The view role enables the service account to view all the resources in the amq-demo namespace, which is necessary for managing the cluster when using the OpenShift dns-ping protocol for discovering the mesh endpoints.
+
+oc policy add-role-to-user view system:serviceaccount:amq-pocs:amq-service-account
+
+
+# Use the broker keystore file to create the AMQ Broker secret:
+
+# oc secrets new amq-app-secret broker.ks
+oc create secret generic amq-app-secret --from-file=./certs/broker.ks --from-file=./certs/broker.ts
+
+# Add the secret to the service account created earlier:
+
+oc secrets add sa/amq-service-account secret/amq-app-secret
 ----
 
-* * [underline]#Activity 4:# Install ScaleDown controller in namespace *amq-pocs*
 
-[source, bash]
-----
-oc create -n amq-pocs -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
-deployment.apps/amq-broker-72-scaledown-controller-openshift-deployment created
-serviceaccount/amq-broker-72-scaledown-controller-openshift-sa created
-role.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-role created
-rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-rb created
-----
+
+
+
+
+
+
+
+
+
+
+
+* [underline]#Activity 1:# Install ScaleDown controller in namespace *amq-pocs*
 
 
 * [underline]#Activity 5:# Create SSL Route
@@ -105,6 +122,19 @@ rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshi
 - 
 
 === STAGE 3: Activities
+
+
+* [underline]#Activity 1:# Install ScaleDown controller in namespace *amq-pocs*
+
+[source, bash]
+----
+oc create -n amq-pocs -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
+deployment.apps/amq-broker-72-scaledown-controller-openshift-deployment created
+serviceaccount/amq-broker-72-scaledown-controller-openshift-sa created
+role.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-role created
+rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-rb created
+----
+
 - 
 
 === STAGE 3:  Define Success Criteria

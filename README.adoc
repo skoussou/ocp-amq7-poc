@@ -87,7 +87,7 @@ rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshi
 ----
 
 
-* _Activity 5: Create SSL Route
+* [Activity 5:]#Underline Create SSL Route
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
 
 

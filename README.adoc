@@ -8,7 +8,7 @@
 
 === STAGE 1: Activities
 
-* Activity 1: Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
+* _Activity 1:_ Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
 
 [source, bash]
 ----
@@ -17,7 +17,7 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
 ----
 
-* Activity 2: Install AMQ Templates in namespace *openshift*
+* _Activity 2:_ Install AMQ Templates in namespace *openshift*
 
 [source, bash]
 ----
@@ -50,7 +50,7 @@ for template in amq-broker-72-basic.yaml \
 
 === STAGE 2: Activities
 
-* Activity 1: Create namespce *amq-pocs" to host all AMQ7 required objects
+* _Activity 1:_ Create namespce *amq-pocs" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -58,8 +58,9 @@ oc login <CLUSTER-URL> -u <USERNAME> -p <PASSWORD>
 oc new-project amq-pocs
 ----
 
-* Activity 2: Create certificates for SSL access on AMQ7 Broker
+* _Activity 2:_ Create certificates for SSL access on AMQ7 Broker
 ** Existing certs can be found here for the secret link:certs[]
+
 [souce, bash]
 ----
 -rw-rw-r--. 1 stkousso stkousso  893 Dec  4 17:32 broker_cert
@@ -70,18 +71,25 @@ oc new-project amq-pocs
 -rw-rw-r--. 1 stkousso stkousso  956 Dec  4 17:33 client.ts
 -rwxr-xr-x. 1 stkousso stkousso 1693 Dec  4 17:29 create-ssl-amq.sh
 ----
+
 ** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
+
 [souce, bash]
 ----
 certs/create-ssl-amq.sh
 ----
 
-* Activity 3: Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+* _Activity 3:_ Create Secret based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+
+[souce, bash]
+----
+oc create secret generic amq-broker-secret --from-file=./certs/broker.ks --from-file=./certs/broker.ts
+oc secrets add sa/<APPLICATION_NAME> secret/amq-broker-secret
+----
 
 
 
-
-* Activity 1: Install ScaleDown controller in namespace *amq-pocs*
+* _Activity 4:_ Install ScaleDown controller in namespace *amq-pocs*
 
 [source, bash]
 ----

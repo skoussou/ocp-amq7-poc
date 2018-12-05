@@ -109,7 +109,7 @@ oc secrets add sa/amq-service-account secret/amq-app-secret
 .Using Template amq-broker-72-persistence-clustered-ssl with parameters
 [options="header,footer"]
 |=============================================================================
-|Environment variable|Display Name      |Value    | Description
+|Environment variable|Display Name      |Value    |            Description
 |AMQ_PROTOCOL    |AMQ Protocols     |openwire,amqp,stomp,mqtt,hornetq        |The protocols to be accepted by the broker
 |AMQ_QUEUES    |Queues     |demoQueue        |Creates an anycast queue called demoQueue. Queue names, separated by commas. These queues will be automatically
     created when the broker starts. If left empty, queues will be still created dynamically.

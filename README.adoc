@@ -59,7 +59,7 @@ oc new-project amq-pocs
 ----
 
 * Activity 2: Create certificates for SSL access on AMQ7 Broker
-** Existing certs can be found here for the secret link:certs
+** Existing certs can be found here for the secret link:certs[]
 [souce, bash]
 ----
 -rw-rw-r--. 1 stkousso stkousso  893 Dec  4 17:32 broker_cert
@@ -70,7 +70,7 @@ oc new-project amq-pocs
 -rw-rw-r--. 1 stkousso stkousso  956 Dec  4 17:33 client.ts
 -rwxr-xr-x. 1 stkousso stkousso 1693 Dec  4 17:29 create-ssl-amq.sh
 ----
-** Alternatively create new ones with script link:certs/create-ssl-amq.sh
+** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
 [souce, bash]
 ----
 certs/create-ssl-amq.sh

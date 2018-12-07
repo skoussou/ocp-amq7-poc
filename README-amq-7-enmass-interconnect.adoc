@@ -1,0 +1,3 @@
+= POC ACTIVITIES
+
+These are the activities related to an enmass based installation etc. of AMQ Brokers, MQ Interconnect

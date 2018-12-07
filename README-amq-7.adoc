@@ -2,6 +2,9 @@
 
 These activites are related to traditional, self-managed AMQ Brokers
 
+== Contents
+:toc: 
+
 == STAGE 1:  Install all necessary components (templates, images/streams)
 
 === STAGE 1: Define Pre-Requisites 

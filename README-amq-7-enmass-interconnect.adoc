@@ -1,3 +1,355 @@
 = POC ACTIVITIES
 
 These are the activities related to an enmass based installation etc. of AMQ Brokers, MQ Interconnect
+
+
+Resources:
+* link:https://developers.redhat.com/blog/2018/05/17/scaling-amq-7-brokers-with-amq-interconnect/[Scaling AMQ 7 Brokers with AMQ Interconnect]
+
+
+== STAGE 1:  Install all necessary components (templates, images/streams) and preps
+
+* Install amq-interconnect images
+
+	$ oc get imagestreamtag -n openshift | grep amq-interconnect-1.2-openshift
+
+	$ oc import-image amq-interconnect-1.2-openshift:latest -n openshift --from=registry.access.redhat.com/amq-interconnect/amq-interconnect-1.2-openshift --confirm
+
+
+* Insstall templates
+
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-basic.yaml | oc create -f - -n openshift
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-tls-auth.yaml | oc create -f - -n openshift
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-sasldb-auth.yaml | oc create -f - -n openshift
+
+* Prepare SSL certs (If you want to secure inter-router traffic, client traffic, or both,)
+*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#creating-secrets-for-tls-authentication-preparing[Documentation]
+
+
+* Creating secrets for SASL authentication
+To authenticate clients against user name and password pairs stored in a SASL database, you must create a list containing the user names and passwords, and provide it to OpenShift as a secret. 
+*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#Creating-secrets-for-sasl-authentication-preparing[Documentation]
+
+
+
+
+
+== STAGE 2:  Setup Brokers (Standalone)
+
+oc new-app --template=amq-broker-72-persistence \
+        -p=APPLICATION_NAME=broker-a \
+        -p=AMQ_ROLE=admin \
+        -p=AMQ_NAME=broker \
+        -p=AMQ_DATA_DIR=/opt/amq/data \
+        -p=AMQ_DATA_DIR_LOGGING="true" \
+        -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
+        -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
+        -p=AMQ_QUEUES=demoQueue \
+        -p=AMQ_ADDRESSES=demoTopic \
+        -p=VOLUME_CAPACITY=1Gi \
+        -p=AMQ_USER=amq-demo-user \
+        -p=AMQ_PASSWORD=amqDemoPassword \
+        -p=AMQ_REQUIRE_LOGIN="false"
+        -n amq-online
+
+
+oc new-app --template=amq-broker-72-persistence \
+        -p=APPLICATION_NAME=broker-b \
+        -p=AMQ_ROLE=admin \
+        -p=AMQ_NAME=broker \
+        -p=AMQ_DATA_DIR=/opt/amq/data \
+        -p=AMQ_DATA_DIR_LOGGING="true" \
+        -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
+        -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
+        -p=AMQ_QUEUES=demoQueue \
+        -p=AMQ_ADDRESSES=demoTopic \
+        -p=VOLUME_CAPACITY=1Gi \
+        -p=AMQ_USER=amq-demo-user \
+        -p=AMQ_PASSWORD=amqDemoPassword \
+        -p=AMQ_REQUIRE_LOGIN="false"
+        -n amq-online
+
+
+echo 'apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: broker-a
+    application: broker-a
+  name: broker-a-amq-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: all
+    port: 61616
+    protocol: TCP
+    targetPort: 61616
+  - name: console-jolokia
+    port: 8161
+    protocol: TCP
+    targetPort: 8161
+  - name: amqp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: mqtt
+    port: 1883
+    protocol: TCP
+    targetPort: 1883
+  - name: stomp
+    port: 61613
+    protocol: TCP
+    targetPort: 61613
+  publishNotReadyAddresses: true
+  selector:
+    deploymentConfig: broker-a-amq
+  type: ClusterIP' | oc create -f - -n amq-online
+
+echo 'apiVersion: v1
+kind: Route
+metadata:
+  labels:
+    app: broker-a
+    application: broker-a
+  name: console-jolokia-broker-a
+spec:
+  port:
+    targetPort: console-jolokia
+  to:
+    kind: Service
+    name: broker-a-amq-headless' | oc create -f - -n amq-online
+
+
+echo 'apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: broker-b
+    application: broker-b
+  name: broker-b-amq-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: all
+    port: 61616
+    protocol: TCP
+    targetPort: 61616
+  - name: console-jolokia
+    port: 8161
+    protocol: TCP
+    targetPort: 8161
+  - name: amqp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: mqtt
+    port: 1883
+    protocol: TCP
+    targetPort: 1883
+  - name: stomp
+    port: 61613
+    protocol: TCP
+    targetPort: 61613
+  publishNotReadyAddresses: true
+  selector:
+    deploymentConfig: broker-b-amq
+  type: ClusterIP' | oc create -f - -n amq-online
+
+
+echo 'apiVersion: v1
+kind: Route
+metadata:
+  labels:
+    app: broker-b
+    application: broker-b
+  name: console-jolokia-broker-b
+spec:
+  port:
+    targetPort: console-jolokia
+  to:
+    kind: Service
+    name: broker-b-amq-headless' | oc create -f - -n amq-online
+
+
+
+== STAGE 3:  AMQ Online Setup
+
+=== Prerequisites
+
+To deploy and test this topology, you should have 
+* at least one AMQ 7 broker deployed and running on some host. If you have more instances, all of them should work in the same cluster definition.
+* Samples will work with a set of queues that you should define in your AMQ 7 brokers. To do that, please add to address section of the  $AMQ_BROKER/etc/broker.xml file the following definitions:
+	
+	<address name="SampleQueue">
+	  <anycast>
+	    <queue name="SampleQueue" />
+	  </anycast>
+	</address>
+
+
+
+=== Install Router Type: Aggregator Router
+
+This router will manage the incoming and outgoing messages from other routers to the AMQ 7 HA cluster topology behind it.
+
+
+=== Install Router Type: Producer Router
+
+This router will manage the incoming messages from producers to the aggregator router.
+
+
+=== Install Router Type: Consumer Router
+
+This router will manage the outgoing messages from the aggregator router to the consumer router.
+
+
+=== Install Interconnect Router-1
+
+
+
+Creating routes
+
+Target Port.
+5672		External clients or message brokers to connect to the router mesh without authentication
+5671 		External clients or message brokers to connect to the router mesh with authentication
+55672		External routers to connect to the router mesh
+8672		Accessing the web console
+	
+==== Create Router NO-AUTH TCP Route (5672)
+	apiVersion: route.openshift.io/v1
+	kind: Route
+	metadata:
+	  labels:
+	    app: amq-interconnect-1-basic
+	    application: amq-interconnect-basic-1
+	    template: amq-interconnect-1-basic
+	  name: router-1-tcp-noauth
+	  namespace: amq-online
+	spec:
+	  host: router-1-tcp-noauth-amq-online.192.168.42.196.nip.io
+	  port:
+	    targetPort: 8672
+	  to:
+	    kind: Service
+	    name: amq-interconnect-basic-1
+	    weight: 100
+	  wildcardPolicy: None
+
+
+==== Create Router NO-AUTH TCP Route (5672)
+	apiVersion: route.openshift.io/v1
+	kind: Route
+	metadata:
+	  creationTimestamp: 2018-12-07T13:37:35Z
+	  labels:
+	    app: amq-interconnect-1-basic
+	    application: amq-interconnect-basic-1
+	    template: amq-interconnect-1-basic
+	  name: router-1-web-console
+	  namespace: amq-online
+	spec:
+	  host: router-1-web-console-amq-online.192.168.42.196.nip.io
+	  port:
+	    targetPort: 5672
+	  to:
+	    kind: Service
+	    name: amq-interconnect-basic-1
+	    weight: 100
+	  wildcardPolicy: None
+	
+
+=== Connecting clients to a router mesh
+
+Procedure: To connect a client to the router mesh, use the following connection URL syntax:
+
+    <scheme>://[<username>@]<host>[:<port>]
+
+    <scheme>
+        For unencrypted TCP, use amqp. If you deployed the router mesh with SSL/TLS authentication, use amqps. 
+    <username>
+        If you deployed the router mesh with SASL user name/password authentication, you must provide the client’s user name. 
+    <host>
+        If the client is in the same OpenShift cluster as the router mesh, use the OpenShift service IP address. Otherwise, use the host name of the route. 
+    <port>
+        If you are connecting to a route, you must specify the port. Use 80 for unsecured connections, and 443 for secured connections. 
+
+    The following table shows some example connection URLs.
+    URL	Description
+
+    amqp://192.0.2.1
+    	
+
+    The client and router mesh are both in the same OpenShift cluster, so the service IP address is used for the connection URL.
+
+    amqps://amq-interconnect-myproject.192.0.2.1.nip.io:443
+    	
+
+    The client is outside of OpenShift, so the route host name is used for the connection URL. In this case, SSL/TLS authentication is implemented, which requires the amqps scheme and port 443. 
+
+
+== Connecting to a message broker (within OCP)
+
+UPDATE:  amq-interconnect-basic-1
+
+	connector {
+	    name: broker
+	    role: route-container
+	    host: broker-amq-headless.amq-online.svc
+	    port: 61616
+	    saslMechanisms: ANONYMOUS
+	}
+
+
+	connector {
+	    name: broker-a
+	    role: route-container
+	    host: broker-a-amq-headless.amq-online.svc
+	    port: 61616
+	    saslMechanisms: ANONYMOUS
+	}
+
+	connector {
+	    name: broker-b
+	    role: route-container
+	    host: broker-b-amq-headless.amq-online.svc
+	    port: 61616
+	    saslMechanisms: ANONYMOUS
+	}
+
+redploy Interconnector
+
+	2018-12-07 14:04:10.949379 +0000 CONN_MGR (info) Configured Connector: broker-amq-headless.amq-online.svc:61616 proto=any, role=route-container
+
+	oc exec amq-interconnect-basic-1-2-h972z -it -- qdstat -c
+	Connections
+  	id  host                                      container                             role             dir  security     authentication  tenant
+  	===============================================================================================================================================
+  	1   broker-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
+  	2   127.0.0.1:33278                           11ef781d-7e5b-4464-875d-442b2c2a98c9  normal           in   no-security  no-auth    
+
+
+=== Monitoring the router mesh using the web console
+Docs: https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#monitoring-router-mesh-using-web-console-managing
+
+
+$ oc exec amq-interconnect-basic-1-5-cjnct -it -- qdstat -c
+Connections
+  id  host                                        container                             role             dir  security     authentication  tenant
+  =================================================================================================================================================
+  3   broker-amq-headless.amq-online.svc:61616    broker                                route-container  out  no-security  anonymous-user  
+  1   broker-b-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
+  2   broker-a-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
+  4   172.17.0.1                                  417b6d34-8dfa-f74c-b186-964451d361a5  normal           in   no-security  no-auth         
+  5   127.0.0.1:46548                             1a30623d-e6f6-474a-a52b-02e67dbb20ad  normal           in   no-security  no-auth
+
+
+
+[cols="2"]
+|===
+|plain
+|plain
+|RED
+{set:cellbgcolor:red}
+|plain
+{set:cellbgcolor!}
+|===

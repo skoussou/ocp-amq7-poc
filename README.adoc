@@ -2,7 +2,7 @@
 
 This repository provides information and guidance on installing and testing AMQ 7 in OCP Environments based on two architecture and Operational Models
 
-* Guidance on POC with AMQ 7   link:docs/README-amq-7.adoc[Traditional broker management/operations ]
-* Guidance on POC with AMQ 7   link:docs/README-amq-7-enmass-interconnect.adoc[as a Messaging Service (enmass) on OCP]
+* Guidance on POC with AMQ 7   link:README-amq-7.adoc[Traditional broker management/operations ]
+* Guidance on POC with AMQ 7   link:README-amq-7-enmass-interconnect.adoc[as a Messaging Service (enmass) on OCP]
 
 

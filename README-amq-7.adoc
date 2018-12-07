@@ -1,9 +1,9 @@
 = POC ACTIVITIES
 
 These activites are related to traditional, self-managed AMQ Brokers
+:toc:
 
-== Contents
-:toc: 
+
 
 == STAGE 1:  Install all necessary components (templates, images/streams)
 

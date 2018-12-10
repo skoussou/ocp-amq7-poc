@@ -36,24 +36,7 @@ To authenticate clients against user name and password pairs stored in a SASL da
 
 == STAGE 2:  Setup Brokers (Standalone)
 
-oc new-app --template=amq-broker-72-persistence \
-        -p=APPLICATION_NAME=broker-a \
-        -p=AMQ_ROLE=admin \
-        -p=AMQ_NAME=broker \
-        -p=AMQ_DATA_DIR=/opt/amq/data \
-        -p=AMQ_DATA_DIR_LOGGING="true" \
-        -p=IMAGE=registry.access.redhat.com/amq-broker-7/amq-broker-72-openshift:1.1 \
-        -p=AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq \
-        -p=AMQ_QUEUES=demoQueue \
-        -p=AMQ_ADDRESSES=demoTopic \
-        -p=VOLUME_CAPACITY=1Gi \
-        -p=AMQ_USER=amq-demo-user \
-        -p=AMQ_PASSWORD=amqDemoPassword \
-        -p=AMQ_REQUIRE_LOGIN="false"
-        -n amq-online
-
-
-oc new-app --template=amq-broker-72-persistence \
+	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-b \
         -p=AMQ_ROLE=admin \
         -p=AMQ_NAME=broker \
@@ -70,109 +53,109 @@ oc new-app --template=amq-broker-72-persistence \
         -n amq-online
 
 
-echo 'apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: broker-a
-    application: broker-a
-  name: broker-a-amq-headless
-spec:
-  clusterIP: None
-  ports:
-  - name: all
-    port: 61616
-    protocol: TCP
-    targetPort: 61616
-  - name: console-jolokia
-    port: 8161
-    protocol: TCP
-    targetPort: 8161
-  - name: amqp
-    port: 5672
-    protocol: TCP
-    targetPort: 5672
-  - name: mqtt
-    port: 1883
-    protocol: TCP
-    targetPort: 1883
-  - name: stomp
-    port: 61613
-    protocol: TCP
-    targetPort: 61613
-  publishNotReadyAddresses: true
-  selector:
-    deploymentConfig: broker-a-amq
-  type: ClusterIP' | oc create -f - -n amq-online
+	echo 'apiVersion: v1
+	kind: Service
+	metadata:
+	  labels:
+    	app: broker-a
+	    application: broker-a
+	  name: broker-a-amq-headless
+	spec:
+	  clusterIP: None
+	  ports:
+	  - name: all
+	    port: 61616
+	    protocol: TCP
+	    targetPort: 61616
+	  - name: console-jolokia
+	    port: 8161
+	    protocol: TCP
+	    targetPort: 8161
+	  - name: amqp
+	    port: 5672
+	    protocol: TCP
+	    targetPort: 5672
+	  - name: mqtt
+	    port: 1883
+	    protocol: TCP
+	    targetPort: 1883
+	  - name: stomp
+	    port: 61613
+	    protocol: TCP
+	    targetPort: 61613
+	  publishNotReadyAddresses: true
+	  selector:
+	    deploymentConfig: broker-a-amq
+	  type: ClusterIP' | oc create -f - -n amq-online
 
-echo 'apiVersion: v1
-kind: Route
-metadata:
-  labels:
-    app: broker-a
-    application: broker-a
-  name: console-jolokia-broker-a
-spec:
-  port:
-    targetPort: console-jolokia
-  to:
-    kind: Service
-    name: broker-a-amq-headless' | oc create -f - -n amq-online
+	echo 'apiVersion: v1
+	kind: Route
+	metadata:
+	  labels:
+	    app: broker-a
+	    application: broker-a
+	  name: console-jolokia-broker-a
+	spec:
+	  port:
+	    targetPort: console-jolokia
+	  to:
+	    kind: Service
+	    name: broker-a-amq-headless' | oc create -f - -n amq-online
+	
+
+	echo 'apiVersion: v1
+	kind: Service
+	metadata:
+	  labels:
+	    app: broker-b
+	    application: broker-b
+	  name: broker-b-amq-headless
+	spec:
+	  clusterIP: None
+	  ports:
+	  - name: all
+	    port: 61616
+	    protocol: TCP
+	    targetPort: 61616
+	  - name: console-jolokia
+	    port: 8161
+	    protocol: TCP
+	    targetPort: 8161
+	  - name: amqp
+	    port: 5672
+	    protocol: TCP
+	    targetPort: 5672
+	  - name: mqtt
+	    port: 1883
+	    protocol: TCP
+	    targetPort: 1883
+	  - name: stomp
+	    port: 61613
+	    protocol: TCP
+	    targetPort: 61613
+	  publishNotReadyAddresses: true
+	  selector:
+	    deploymentConfig: broker-b-amq
+	  type: ClusterIP' | oc create -f - -n amq-online
+	
+
+	echo 'apiVersion: v1
+	kind: Route
+	metadata:
+	  labels:
+	    app: broker-b
+	    application: broker-b
+	  name: console-jolokia-broker-b
+	spec:
+	  port:
+	    targetPort: console-jolokia
+	  to:
+	    kind: Service
+	    name: broker-b-amq-headless' | oc create -f - -n amq-online
+	
 
 
-echo 'apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: broker-b
-    application: broker-b
-  name: broker-b-amq-headless
-spec:
-  clusterIP: None
-  ports:
-  - name: all
-    port: 61616
-    protocol: TCP
-    targetPort: 61616
-  - name: console-jolokia
-    port: 8161
-    protocol: TCP
-    targetPort: 8161
-  - name: amqp
-    port: 5672
-    protocol: TCP
-    targetPort: 5672
-  - name: mqtt
-    port: 1883
-    protocol: TCP
-    targetPort: 1883
-  - name: stomp
-    port: 61613
-    protocol: TCP
-    targetPort: 61613
-  publishNotReadyAddresses: true
-  selector:
-    deploymentConfig: broker-b-amq
-  type: ClusterIP' | oc create -f - -n amq-online
-
-
-echo 'apiVersion: v1
-kind: Route
-metadata:
-  labels:
-    app: broker-b
-    application: broker-b
-  name: console-jolokia-broker-b
-spec:
-  port:
-    targetPort: console-jolokia
-  to:
-    kind: Service
-    name: broker-b-amq-headless' | oc create -f - -n amq-online
-
-
-
-== STAGE 3:  AMQ Online Setup
+== STAGE 3:  AMQ Interonnect Setup
 
 === Prerequisites
 

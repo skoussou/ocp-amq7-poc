@@ -9,8 +9,8 @@ Resources:
 Table 1.1. Supported features reference table
 
 
-		Feature	 			Brokered address space	Standard address space
-----------------------------------------------------------------------------------
+	Feature	 			Brokered address space	Standard address space
+	----------------------------------------------------------------------------------
 	Address type	Queue		Yes			Yes
 			Topic		Yes			Yes
 			Multicast	No			Yes

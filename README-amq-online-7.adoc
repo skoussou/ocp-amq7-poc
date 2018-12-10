@@ -62,12 +62,30 @@ Table 1.1. Supported features reference table
 
 
 * Uninstalling *AMQ Online* selecting on of the following option
-
-link:scripts/amq-online-ocp-objects-delete.sh[]
-
+** link:scripts/amq-online-ocp-objects-delete.sh[]
 
 
 
+== STAGE 2:  Address Space Reviews
+
+=== STANDARD ADDRESS SPACE
+* Address Types Allowed
+**Queue
+** Topic
+** Multicast
+** Anycast
+** Subscription
+
+image:pics/AMQOnline-StandardAddressArchitecture.png["STANDARD ADDRESS SPACE",height=240] 
+
+
+=== BROKERED ADDRESS SPACE
+
+* Address Types Allowed
+**Queue
+** Topic
+
+image:pics/AMQOnline-BROKEREDAddressArchitecture.png["BROKERED ADDRESS SPACE",height=240] 
 
 
 

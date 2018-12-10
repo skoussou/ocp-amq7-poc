@@ -28,42 +28,10 @@ Durable subscriptions|JMS durable subscriptions	|Yes			|No
 JMS		|Transaction support |Yes			|No
 		Selectors on queues |Yes			|No
 		Message ordering guarantees (including prioritization) |Yes			|No
-Scalability	Scalable distributed queues and topics |No			|Yes 
+Scalability	Scalable distributed queues and topics |No			|Yes |
 
 
-Feature	 			Brokered address space	Standard address space
-----------------------------------------------------------------------------------
-Address type	Queue		Yes			Yes
-		Topic		Yes			Yes
-		Multicast	No			Yes
-		Anycast		No			Yes
-		Subscription	No			Yes
-Messaging 
-protocol	AMQP		Yes			Yes
-		MQTT		Yes			Technology preview only
-		CORE		Yes			No
-		OpenWire	Yes			No
-		STOMP		Yes			No
-Transports	TCP		Yes			Yes
-		WebSocket	Yes			Yes
-Durable 
-subscriptions	JMS durable 
-		subscriptions	Yes			No
-		"Named" durable 
-		subscriptions	No			Yes
-JMS		Transaction 
-		support		Yes			No
-		Selectors 
-		on queues	Yes			No
-		Message 
-		ordering 
-		guarantees 
-		(including 
-		prioritization)	Yes			No
-Scalability	Scalable 
-		distributed 
-		queues and 
-		topics		No			Yes 
+
 
 
 
@@ -85,6 +53,7 @@ Scalability	Scalable
 
 * Uninstalling *AMQ Online* selecting on of the following option
 
+link:scripts/amq-online-ocp-objects-delete.sh[]
 
 
 

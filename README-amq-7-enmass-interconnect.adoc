@@ -1,6 +1,6 @@
 = POC ACTIVITIES
 
-These are the activities related to an enmass based installation etc. of AMQ Brokers, MQ Interconnect
+These are the activities related to installation of AMQ Brokers, MQ Interconnect manually
 
 
 Resources:
@@ -343,13 +343,21 @@ Connections
   5   127.0.0.1:46548                             1a30623d-e6f6-474a-a52b-02e67dbb20ad  normal           in   no-security  no-auth
 
 
+== Scaling the router mesh
 
-[cols="2"]
-|===
-|plain
-|plain
-|RED
-{set:cellbgcolor:red}
-|plain
-{set:cellbgcolor!}
-|===
+
+You can scale your deployment to add or remove routers from the router mesh. When you scale up the router mesh, a new pod is deployed with a router, which automatically connects to any other running routers.
+
+Procedure
+
+    Navigate to the Overview page.
+
+    Do one of the following:
+
+        To add routers to the mesh, click the up arrow next to the pods diagram.
+
+        A new pod is deployed, with a router running inside of it. The router automatically connects to each router in the mesh to maintain a full mesh topology.
+
+        To remove routes from the mesh, click the down arrow next to the pods diagram.
+
+        A pod is removed from the deployment, and its router is shut down. Any clients that were connected to the router are disconnected, but can fail over to any of the remaining routers in the mesh. 

@@ -332,15 +332,15 @@ redploy Interconnector
 Docs: https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#monitoring-router-mesh-using-web-console-managing
 
 
-$ oc exec amq-interconnect-basic-1-5-cjnct -it -- qdstat -c
-Connections
-  id  host                                        container                             role             dir  security     authentication  tenant
-  =================================================================================================================================================
-  3   broker-amq-headless.amq-online.svc:61616    broker                                route-container  out  no-security  anonymous-user  
-  1   broker-b-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
-  2   broker-a-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
-  4   172.17.0.1                                  417b6d34-8dfa-f74c-b186-964451d361a5  normal           in   no-security  no-auth         
-  5   127.0.0.1:46548                             1a30623d-e6f6-474a-a52b-02e67dbb20ad  normal           in   no-security  no-auth
+	$ oc exec amq-interconnect-basic-1-5-cjnct -it -- qdstat -c
+	Connections
+	  id  host                                        container                             role             dir  security     authentication  tenant
+	  =================================================================================================================================================
+	  3   broker-amq-headless.amq-online.svc:61616    broker                                route-container  out  no-security  anonymous-user  
+	  1   broker-b-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
+	  2   broker-a-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
+	  4   172.17.0.1                                  417b6d34-8dfa-f74c-b186-964451d361a5  normal           in   no-security  no-auth         
+	  5   127.0.0.1:46548                             1a30623d-e6f6-474a-a52b-02e67dbb20ad  normal           in   no-security  no-auth
 
 
 == Scaling the router mesh

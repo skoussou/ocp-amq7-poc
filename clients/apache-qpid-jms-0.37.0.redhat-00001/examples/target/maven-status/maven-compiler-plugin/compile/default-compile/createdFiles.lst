@@ -1,0 +1,15 @@
+org/apache/qpid/jms/example/Server$1.class
+org/apache/qpid/jms/example/Client$1.class
+org/apache/qpid/jms/example/HelloWorld.class
+org/apache/qpid/jms/example/Sender.class
+org/apache/qpid/jms/example/Sender$MyExceptionListener.class
+org/apache/qpid/jms/example/Receiver.class
+org/apache/qpid/jms/example/Server$MyExceptionListener.class
+org/apache/qpid/jms/example/Server.class
+org/apache/qpid/jms/example/HelloWorld$1.class
+org/apache/qpid/jms/example/Client.class
+org/apache/qpid/jms/example/Sender$1.class
+org/apache/qpid/jms/example/Receiver$MyExceptionListener.class
+org/apache/qpid/jms/example/Client$MyExceptionListener.class
+org/apache/qpid/jms/example/HelloWorld$MyExceptionListener.class
+org/apache/qpid/jms/example/Receiver$1.class

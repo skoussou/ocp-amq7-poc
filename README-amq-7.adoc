@@ -172,6 +172,7 @@ oc new-project amq-pocs-non-ssl
 	
 ** Expose AMQ Broker TCP Protocols to External Clients via NodePort (*Tested Successfully*)
 *** Create Service exposing port *all* non-ssl (61616) over nodeport *30001*
+
 	echo 'apiVersion: v1
 	kind: Service
 	metadata:

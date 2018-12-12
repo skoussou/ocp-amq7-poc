@@ -5,7 +5,7 @@ These are the activities related to installation of AMQ Brokers, MQ Interconnect
 
 Resources:
 * link:https://developers.redhat.com/blog/2018/05/17/scaling-amq-7-brokers-with-amq-interconnect/[Scaling AMQ 7 Brokers with AMQ Interconnect]
-
+* link:https://www.youtube.com/watch?v=nVf5e97rvgQ[AMQ 7 and Microservices: Messaging for Everything]
 
 == STAGE 1:  Install all necessary components (templates, images/streams) and preps
 

@@ -11,10 +11,13 @@ These activites are related to traditional, self-managed AMQ Brokers
 
 === STAGE 1: Activities
 
-* * [underline]#Activity 1:# Install ImageStreams for AMQ Broker and ScaleDown controller in namespace /*openshift*/
+* Activity 1: Install ImageStreams for AMQ Broker and ScaleDown controller in namespace *openshift*
 
 [source, bash]
 ----
+
+(the imastreams are now also available also under /amq-7-imagestreams)
+
 oc login -u system:admin
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-image-streams.yaml -n openshift
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
@@ -24,6 +27,9 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 
 [source, bash]
 ----
+
+(the templates are now also available also under /amq-7-templates)
+
 for template in amq-broker-72-basic.yaml \
  amq-broker-72-ssl.yaml \
  amq-broker-72-custom.yaml \
@@ -41,6 +47,13 @@ for template in amq-broker-72-basic.yaml \
 
 === STAGE 1: Define Success Criteria
 
+1. Templates are available
+
+	oc get templates -n openshift |grep amq-broker
+
+2. The imagestreams are available
+
+	oc get is -n openshift |grep amq-broker
 
 ---
 
@@ -57,7 +70,7 @@ for template in amq-broker-72-basic.yaml \
 
 ==== STAGE 2a: NON-SSL Clustered & Persistent Installation
 
-* [underline]#Activity 2s:# Create namespce *amq-pocs-non-ssl" to host all AMQ7 required objects
+* Activity 2s: Create namespce *amq-pocs-non-ssl" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -65,7 +78,7 @@ oc login <CLUSTER-URL> -u <USERNAME> -p <PASSWORD>
 oc new-project amq-pocs-non-ssl
 ----
 
-* [underline]#Activity 2a-1:# Deploying a set of clustered SSL brokers
+* Activity 2a-1: Deploying a set of clustered SSL brokers
 ** Create AMQ7 Broker Application with Stateful Sets utilizing template "amq-broker-72-persistence-clustered" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
 
 	oc new-app --template=amq-broker-72-persistence-clustered \
@@ -88,9 +101,9 @@ oc new-project amq-pocs-non-ssl
 	and scale to 3 brokers
 	oc scale statefulset broker-amq --replicas=3
 
-* [underline]#Activity 2a-2:# Configuring OCP Environment for client access
+* Activity 2a-2: Configuring OCP Environment for client access
 ** Expose ADMIN Console (per broker)
-   [underline]#ADMIN CONSOLE JOLOKIA Connection#
+   ADMIN CONSOLE JOLOKIA Connection
    
 	The following results in round-robin console requests (for each new session brower or REST based) via this route to all 3 consoles
 
@@ -104,7 +117,7 @@ oc new-project amq-pocs-non-ssl
  	GUI CONSOLE: http://broker-amq-1.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc/console
  	GUI CONSOLE: http://broker-amq-3.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc/console
 
-*** Create new headless service for consoles to separate from service for TCP Broker connections
+*** Create a new headless service for consoles to separate from service for TCP Broker connections (this is so 2 routes can be created one for TCP access & another for jolokia web console see above)
 
 	echo 'apiVersion: v1
 	kind: Service
@@ -119,26 +132,10 @@ oc new-project amq-pocs-non-ssl
 	spec:
 	  clusterIP: None
 	  ports:
-  	- name: all
-	    port: 61616
-	    protocol: TCP
-	    targetPort: 61616
 	  - name: console-jolokia
 	    port: 8161
 	    protocol: TCP
 	    targetPort: 8161
-	  - name: amqp
-	    port: 5672
-	    protocol: TCP
-	    targetPort: 5672
-	  - name: mqtt
-	    port: 1883
-	    protocol: TCP
-	    targetPort: 1883
-	  - name: stomp
-	    port: 61613
-	    protocol: TCP
-	    targetPort: 61613
 	  publishNotReadyAddresses: true
 	  selector:
 	    deploymentConfig: broker-amq
@@ -166,8 +163,10 @@ oc new-project amq-pocs-non-ssl
 	  wildcardPolicy: Subdomain
 	  host: star.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc' | oc create -f - -n amq-pocs-non-ssl
 
+*** No ROUTE to access TCP based ports (amqp etc.) as OCP router is using an HTTP proxy.  You have to use TLS-passthrough on port 443. Therefore a NodePort service will be used  to access 61616 for AMQP and other protocols
+
 *** Add to */etc/hosts* for the system to resolve
-	192.168.42.196 broker-amq-0.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc broker-amq-1.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc broker-amq-2.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc
+	192.168.42.196[IP OF OC CLUSTER] broker-amq-0.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc broker-amq-1.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc broker-amq-2.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc
 
 	
 ** Expose AMQ Broker TCP Protocols to External Clients via NodePort (*Tested Successfully*)
@@ -196,11 +195,15 @@ oc new-project amq-pocs-non-ssl
 
 *** Testing TCP Access
 
+Pre-requisites: link:https://developers.redhat.com/products/amq/download/[*Download AMQ-7 Broker Server Binaries*]
+
+	*TEST 1*
 	Node PORT Access. Tested sucessfully with (the following are using broker/bin installation binaries available locally)
 	3 consumers:	artemis consumer --url tcp://192.168.42.196:30001 --message-count 100 --destination queue://demoQueue (maybe can try to broker-amq-0, broker-amq-1, broker-amq-2)
 	1 producerr: 	artemis producer --url tcp://192.168.42.196:30001 --message-count 300 --destination queue://demoQueue
 
-        ocp-amq7-poc/clients/apache-qpid-jms-0.37.0.redhat-00001/examples
+	*TEST 1*
+        ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples
 	mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests -s example-settings.xm;
 
 	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
@@ -210,50 +213,21 @@ oc new-project amq-pocs-non-ssl
 			queue.myQueueLookup = demoQueue
 			topic.myTopicLookup = demoTopic
 
-** Expose AMQ Broker TCP Protocols to External Clients via Headless Service (*NOT Tested Successfully*)
-*** Create Route from the pre-existing (from template) *broker-amq-headless* service to expose the all tcp (non-ssl) port
-	apiVersion: route.openshift.io/v1
-	kind: Route
-	metadata:
-	  labels:
-	    app: broker-amq
-	    application: broker-amq
-	  name: route-all-protocols-non-ssl
-	  namespace: amq-pocs-non-ssl
-	spec:
-	  host: star.broker-amq-headless.amq-pocs-non-ssl.svc
-	  port:
-	    targetPort: 61616
-	  to:
-	    kind: Service
-	    name: broker-amq-headless-2
-	    weight: 100
-  	wildcardPolicy: Subdomain
 
-*** Testing TCP Access
-
-        ocp-amq7-poc/clients/apache-qpid-jms-0.37.0.redhat-00001/examples
-	mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests -s example-settings.xm;
-
-	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
-	jndi.properties|-
-			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
-			connectionfactory.myFactoryLookup = connectionfactory.myFactoryLookup = amqp://broker-amq-0.broker-amq-headless-2.amq-pocs-non-ssl.svc:80
-			queue.myQueueLookup = demoQueue
-			topic.myTopicLookup = demoTopic
-
-
-	[ERROR] Caused by: org.apache.qpid.proton.engine.TransportException: AMQP SASL header mismatch value 48, expecting 41. In state: HEADER0
-
-
-* [underline]#Activity 2a-3:# Scaling set of clustered SSL brokers (scale controller)
-** [underline]#Activity 1:# Install ScaleDown controller in namespace *amq-pocs*
+* Activity 2a-3: Scaling set of clustered SSL brokers (scale controller)
+** Activity 1: Install ScaleDown controller in namespace *amq-pocs-non-ss*
 
 	oc create -n amq-pocs-non-ssl -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
+
 	deployment.apps/amq-broker-72-scaledown-controller-openshift-deployment created
 	serviceaccount/amq-broker-72-scaledown-controller-openshift-sa created
 	role.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-role created
 	rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshift-rb created
+
+
+*** Scale Down Stateful set of AMQ-7 Brokers and watch the logs of the *scaledown-controller* (oc logs -f [scaledown-controller POD NAME]) for the draining activity. 
+
+Sending messaging with no consumers and watching the jolokia web-consoles of the other 2 left brokers should indicate the messages were transferred
 
 	oc scale statefulset broker-amq --replicas=2
 
@@ -283,6 +257,10 @@ oc new-project amq-pocs-non-ssl
 	Left with 2 storage
 	broker-amq-pvol-broker-amq-0   Bound     pv0002    100Gi      RWO,ROX,RWX                   21h
 	broker-amq-pvol-broker-amq-1   Bound     pv0031    100Gi      RWO,ROX,RWX                   21h
+
+
+
+
 
 
 ==== STAGE 2B: SSL Clustered & Persistent Installation
@@ -356,7 +334,7 @@ oc new-project amq-pocs
     oc logs broker-amq-2
 
 
-* [underline]#Activity 2b-4:# Create an SSL Route
+* Activity 2b-4: Create an SSL Route
 ** Option A: Single Broker installation
 *** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating-route-ocp_broker-ocp[3.3. Creating an SSL route]
 
@@ -379,7 +357,7 @@ oc new-project amq-pocs
 ** Option B: Clustered Broker installation
 *** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#exposing_the_brokers[8.10.1. Exposing the brokers]
      
-*** [red]*PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]  (login as admin and in default project apply oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true)
+*** *PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]  (login as admin and in default project apply oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true)
 *** Route Configuration
     
     Configure the brokers so that the cluster of brokers are externally available and can be connected to directly, bypassing the OpenShift router. This is done by creating a route that exposes each pod using its own hostname. 
@@ -406,8 +384,8 @@ oc new-project amq-pocs
 
 
 
-* [underline]#Activity 2b-5:# Creating a route for the management console
-** [red]*PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]  (login as admin and in default project apply oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true)
+* Activity 2b-5: Creating a route for the management console
+** *PRE-REQUISITES ROUTER TO ALLOW* see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]  (login as admin and in default project apply oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true)
 ** Creating a route for the management console (see link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#creating_a_route_for_the_management_console_2[Documentation on creating management console]
 
     The clustering templates do not expose the console by default. This is because the OpenShift proxy would load balance around each broker in the cluster and it would not be possible to control which broker console is connected.
@@ -441,7 +419,7 @@ oc new-project amq-pocs
 
 
 
-* [underline]#Activity 2b-6:# Create Service Account for the AMQ Broker deployment, Secrets based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
+* Activity 2b-6: Create Service Account for the AMQ Broker deployment, Secrets based on certs and asign to SA (MAY HAVE TO DO AFTER INSTALLATION OF OBJETS so SA exists)
 ** You can run also sript from echo link:scripts/setup_sa_secrets_assign.sh[]
 
 	[REDUNDANT IF CREATED BY THE TEMPLATE] echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "broker-service-account"}}' | oc create -f -
@@ -455,20 +433,18 @@ oc new-project amq-pocs
 
 	# Add the secret to the service account created earlier:
 	oc secrets add sa/amq-service-account secret/amq-app-secret
-	----
 
 
 
-* [underline]#Activity 2b-7:# Connecting External Clients via SubDomains
+* Activity 2b-7: Connecting External Clients via SubDomains
 ** Add entries into the */etc/hosts* file to map the route name onto the actual IP addresses of the brokers (ie. the IP address of the OpenShift cluster):
 	
 	192.168.42.196 broker-amq-0.broker-amq-headless.amq-pocs.svc broker-amq-1.broker-amq-headless.amq-pocs.svc broker-amq-2.broker-amq-headless.amq-pocs.svc
 	
 ** Testing TCP Access
 
-        ocp-amq7-poc/clients/apache-qpid-jms-0.37.0.redhat-00001/examples
+        ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples
 	mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests -s example-settings.xm;
-
 
 
 	Update the jndi.properties configuration file of the client to use the route, truststore, and keystore created previously, for example:
@@ -498,7 +474,7 @@ oc new-project amq-pocs
 
 * [underline]#Activity 2B-8:# Scaling set of clustered SSL brokers (scale controller)
 
-*TBD*
+see above *Activity 2a-3* for siilar work
 
 
 ==== STAGE 2C: Deploying a broker with custom configuration
@@ -523,12 +499,14 @@ oc new-project amq-pocs
 == STAGE 3:  Client/Consumers for ingestion of data
 
 === STAGE 3:  Define Pre-Requisites 
-- 
+- JDK 8 available
+- MAVEN 3.5+ installed
+- internet access for download of libraries via maven or MAVEN Server on DMZ to proxy repos
 
 === STAGE 3: Activities
 
 
-* [underline]#Activity 1:# Install ScaleDown controller in namespace *amq-pocs*
+* [Activity 1: Install ScaleDown controller in namespace *amq-pocs*
 
 [source, bash]
 ----

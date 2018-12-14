@@ -194,7 +194,7 @@ oc new-project amq-pocs-non-ssl
 
 *** Testing TCP Access
 
-Pre-requisites: link:https://developers.redhat.com/products/amq/download/[*Download AMQ-7 Broker Server Binaries*]
+  Pre-requisites: link:https://developers.redhat.com/products/amq/download/[*Download AMQ-7 Broker Server Binaries*]
 
 	*TEST 1*
 	Node PORT Access. Tested sucessfully with (the following are using broker/bin installation binaries available locally)

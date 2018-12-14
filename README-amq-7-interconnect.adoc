@@ -451,7 +451,7 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
 
 
 * Resulting Topology
-**The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
+** The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
 
 image:pics/amq-interconnect-console-router-1-Topology-C.png["Topology 3 Brokers",height=240] 
 

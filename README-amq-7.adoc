@@ -473,18 +473,15 @@ oc new-project amq-pocs
 
 
 
-* [underline]#Activity 2B-8:# Scaling set of clustered SSL brokers (scale controller)
+* Activity 2b-8: Scaling set of clustered SSL brokers (scale controller)
 
 see above *Activity 2a-3* for siilar work
 
-----
 
-==== STAGE 2C: Deploying a broker with custom configuration
+==== STAGE 2c: Deploying a broker with custom configuration
 *TBD*
 
-----
-
-==== STAGE 2D: Deploying a basic broker with persistence and SSL
+==== STAGE 2d: Deploying a basic broker with persistence and SSL
 *TBD*
 
 

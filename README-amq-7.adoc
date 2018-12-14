@@ -228,7 +228,7 @@ oc new-project amq-pocs-non-ssl
 
 *** Scale Down Stateful set of AMQ-7 Brokers and watch the logs of the *scaledown-controller* (oc logs -f [scaledown-controller POD NAME]) for the draining activity. 
 
-Sending messaging with no consumers and watching the jolokia web-consoles of the other 2 left brokers should indicate the messages were transferred
+	Sending messaging with no consumers and watching the jolokia web-consoles of the other 2 left brokers should indicate the messages were transferred
 
 	oc scale statefulset broker-amq --replicas=2
 

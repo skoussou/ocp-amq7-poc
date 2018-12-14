@@ -43,7 +43,8 @@ To authenticate clients against user name and password pairs stored in a SASL da
 Setting up 3 brokers which are Stateful Sets with single instance 
 
 * *AMQ Broker - A* Deployment (*IMPORTANT*: This AMQ Broker contains Queue: *DemoQueue*)
-oc new-app --template=amq-broker-72-persistence \
+
+	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-a \
         -p=AMQ_ROLE=admin \
         -p=AMQ_NAME=broker-a \
@@ -61,7 +62,8 @@ oc new-app --template=amq-broker-72-persistence \
         -n amq-pocs-interconnectors
 
 ** *AMQ Broker - A* - OCP Route Exposing *jolokia* port for *AMQ7 Web Console* for this broker 
-echo 'apiVersion: v1
+
+	echo 'apiVersion: v1
 	kind: Route
 	metadata:
 	  labels:
@@ -87,7 +89,8 @@ echo 'apiVersion: v1
 
 
 * *AMQ Broker - B* Deployment (*IMPORTANT*: This AMQ Broker contains 2 Queues *DemoQueue* and *dq2*)
-oc new-app --template=amq-broker-72-persistence \
+
+	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-b \
         -p=AMQ_ROLE=admin \
         -p=AMQ_NAME=broker-b \
@@ -106,7 +109,8 @@ oc new-app --template=amq-broker-72-persistence \
 
 
 ** *AMQ Broker - B* - OCP Route Exposing *jolokia* port for *AMQ7 Web Console* on 
-echo 'apiVersion: v1
+	
+	echo 'apiVersion: v1
 	kind: Route
 	metadata:
 	  labels:
@@ -132,7 +136,8 @@ echo 'apiVersion: v1
 
 
 * *AMQ Broker - C* Deployment (*IMPORTANT*: This AMQ Broker contains Queue:*dq2*)
-oc new-app --template=amq-broker-72-persistence \
+
+	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-c \
         -p=AMQ_ROLE=admin \
         -p=AMQ_NAME=broker-c \
@@ -151,7 +156,8 @@ oc new-app --template=amq-broker-72-persistence \
 
 
 ** *AMQ Broker - C* - OCP Route Exposing *jolokia* port for *AMQ7 Web Console* on 
-echo 'apiVersion: v1
+
+	echo 'apiVersion: v1
 	kind: Route
 	metadata:
 	  labels:

@@ -293,7 +293,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
     connector {        
        name: broker-a
        role: route-container
-       host: broker-a-amq-headless.amq-interconnectors.svc     
+       host: broker-a-amq-headless.amq-pocs-interconnectors.svc   
        port: 61616
        saslMechanisms: ANONYMOUS
     }
@@ -301,7 +301,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
     connector {
        name: broker-b
        role: route-container
-       host: broker-b-amq-headless.amq-interconnectors.svc     
+       host: broker-b-amq-headless.amq-pocs-interconnectors.svc   
        port: 61616
        saslMechanisms: ANONYMOUS
     }
@@ -379,14 +379,21 @@ The topology in *router-1* web-console will now be showing the router and its co
 
 image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",height=240] 
 
-Facility *qdstat* shows on the router pod 2 *in connections* from the console and the no-auth port
+** Facility *qdstat* shows on the router pod 
+*** 2 *in connections* from the console and the no-auth port as well as
+*** 2 *out connections* to the 2 brokers
 
-	$ oc exec router-1-1-dbb9h -it -- qdstat -c
+	$ oc exec router-1-3-7pzxm -it -- qdstat -c
 	Connections
-	  id  host             container                             role    dir  security     authentication  tenant
-	  =============================================================================================================
-	  2   172.17.0.1       bb15316c-db9a-e441-b4ca-e3d30ec34919  normal  in   no-security  no-auth         
-	  3   127.0.0.1:60566  b63e1cd5-026c-41cf-907a-5c63471816f6  normal  in   no-security  no-auth  
+	  id  host                                                      container                             role             dir  security     authentication  tenant
+	  ===============================================================================================================================================================
+	  1   broker-b-amq-headless.amq-pocs-interconnectors.svc:61616  broker-b                              route-container  out  no-security  anonymous-user  
+	  2   broker-a-amq-headless.amq-pocs-interconnectors.svc:61616  broker-a                              route-container  out  no-security  anonymous-user  
+	  4   172.17.0.1                                                ee38c357-38ec-c745-a705-785974f87f55  normal           in   no-security  no-auth         
+	  5   127.0.0.1:56206                                           a37d825e-78db-4243-98d6-80aa91e52cfb  normal           in   no-security  no-auth         
+
+*Important:* To understand the behavior better around this loadbalancing and routing look at the documentation link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#message_routing[Message Routing] and read again the latter setions of the ConfigMap to see the address routing pre-configurations
+
 
 
 === Scenario 2

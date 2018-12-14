@@ -374,7 +374,6 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 
 
 * Resulting Topology
-
 	The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
 
 	image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",height=240] 

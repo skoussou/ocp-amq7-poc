@@ -289,56 +289,60 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 	or
 	oc edit cm router-1
 
-	connector {
-            name: broker-a
-            role: route-container
-            host: broker-a-amq-headless.amq-interconnectors.svc 
-            port: 61616
-            saslMechanisms: ANONYMOUS
-    	}
 
-	connector {
-            name: broker-b
-            role: route-container
-            host: broker-b-amq-headless.amq-interconnectors.svc 
-            port: 61616
-            saslMechanisms: ANONYMOUS
-    	}
+    connector {        
+       name: broker-a
+       role: route-container
+       host: broker-a-amq-headless.amq-interconnectors.svc     
+       port: 61616
+       saslMechanisms: ANONYMOUS
+    }
+
+    connector {
+       name: broker-b
+       role: route-container
+       host: broker-b-amq-headless.amq-interconnectors.svc     
+       port: 61616
+       saslMechanisms: ANONYMOUS
+    }
+
+
 
 
 ** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-a* (both in/out ie. write/read)
 
-	Either via the OCP console access Resources-->Config Maps-->router-1 (click on it, Actions, Edit Yaml) add the following
-	or
-	oc edit cm router-1
 
-    	linkRoute {
-            prefix: demoQueue
-            connection: broker-a
-            direction: in
-    	}
+    linkRoute {
+       prefix: demoQueue
+       connection: broker-a
+       direction: in
+    }
 
-    	linkRoute {
-            prefix: demoQueue
-            connection: broker-a
-            direction: out
-    	}
+    linkRoute {
+       prefix: demoQueue
+       connection: broker-a
+       direction: out
+    }
+
 
 ** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-b* (both in/out ie. write/read)
 
-    	linkRoute {
-            prefix: demoQueue
-            connection: broker-b
-            direction: in
-    	}
+    linkRoute {
+       prefix: demoQueue
+       connection: broker-b
+       direction: in
+    }
 
-    	linkRoute {
-            prefix: demoQueue
-            connection: broker-b
-            direction: out
-    	}
+    linkRoute {
+       prefix: demoQueue
+       connection: broker-b
+       direction: out
+    }
+
 
 ** No Configuraton on interconnect *router-1* to give accss to address *dq2* 
+
+** Go to OCP console on Applications-->Deployments-->router-1 (Press the *Deploy*) to take effect on the changes
 
 
 ==== Test Interconnect Scenario 1
@@ -367,6 +371,55 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 			topic.myTopicLookup = demoTopic
 
 	*IMPORTANT*: the way this works is because both the consumer & producer are connected at the time and the *router-1* routes the message directly
+
+
+* Resulting Topology
+
+The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
+
+image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",height=240] 
+
+Facility *qdstat* shows on the router pod 2 *in connections* from the console and the no-auth port
+
+	$ oc exec router-1-1-dbb9h -it -- qdstat -c
+	Connections
+	  id  host             container                             role    dir  security     authentication  tenant
+	  =============================================================================================================
+	  2   172.17.0.1       bb15316c-db9a-e441-b4ca-e3d30ec34919  normal  in   no-security  no-auth         
+	  3   127.0.0.1:60566  b63e1cd5-026c-41cf-907a-5c63471816f6  normal  in   no-security  no-auth  
+
+
+=== Scenario 2
+
+* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
+
+** No Configuraton on interconnect *router-1* to give accss to address *dq
+
+
+	connector {
+            name: broker-a
+            role: route-container
+            host: broker-a-amq-headless.amq-interconnectors.svc 
+            port: 61616
+            saslMechanisms: ANONYMOUS
+    	}
+
+    	linkRoute {
+            prefix: dq2
+            connection: broker-b
+            direction: in
+    	}
+
+    	linkRoute {
+            prefix: dq2
+            connection: broker-b
+            direction: out
+    	}
+
+
+
+==== Test Interconnect Scenario 1
+
 
 
 === Install Interconnect Router-2

@@ -197,11 +197,13 @@ oc new-project amq-pocs-non-ssl
 **** Pre-requisites: link:https://developers.redhat.com/products/amq/download/[*Download AMQ-7 Broker Server Binaries*]
 
 **** *TEST 1*
+
 	Node PORT Access. Tested sucessfully with (the following are using broker/bin installation binaries available locally)
 	3 consumers:	artemis consumer --url tcp://192.168.42.196:30001 --message-count 100 --destination queue://demoQueue (maybe can try to broker-amq-0, broker-amq-1, broker-amq-2)
 	1 producerr: 	artemis producer --url tcp://192.168.42.196:30001 --message-count 300 --destination queue://demoQueue
 
 **** *TEST 2*
+
         ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples
 	mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests -s example-settings.xm;
 

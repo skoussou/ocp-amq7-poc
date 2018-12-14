@@ -1,7 +1,7 @@
 = POC ACTIVITIES
 
 These activites are related to traditional, self-managed AMQ Brokers
-:toc:
+:toc::
 
 
 
@@ -23,7 +23,7 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/amq-broker-7-scaledown-controller-image-streams.yaml -n openshift
 ----
 
-* * [underline]#Activity 2:# Install AMQ Templates in namespace *openshift*
+* Activity 2: Install AMQ Templates in namespace *openshift*
 
 [source, bash]
 ----
@@ -267,7 +267,7 @@ Sending messaging with no consumers and watching the jolokia web-consoles of the
 
 
 
-* [underline]#Activity 2b-1:# Create namespce *amq-pocs" to host all AMQ7 required objects
+* Activity 2b-1: Create namespce *amq-pocs" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -277,7 +277,7 @@ oc new-project amq-pocs
 
 
 
-* [underline]#Activity 2b-2:# Create certificates for SSL access on AMQ7 Broker
+* Activity 2b-2: Create certificates for SSL access on AMQ7 Broker
 
 ** Existing certs can be found here for the secret link:certs[]
 ** Alternatively create new ones with script link:certs/create-ssl-amq.sh[]
@@ -288,7 +288,7 @@ oc new-project amq-pocs
 ----
 
 
-* [underline]#Activity 2b-3:# Deploying a set of clustered SSL brokers
+* Activity 2b-3: Deploying a set of clustered SSL brokers
 ** Create AMQ7 Broker Application with Stateful Sets utilizing template "amq-broker-72-persistence-clustered-ssl" and parameters link:docs/amq-broker-72-persistence-clustered-ssl.adoc[]
 
     oc new-app --template=amq-broker-72-persistence-clustered-ssl \
@@ -530,23 +530,20 @@ rolebinding.rbac.authorization.k8s.io/amq-broker-72-scaledown-controller-openshi
 
 == STAGE 4:  Setup AMQ & OCP Objects for HA & Scale Up/Downs
 
-=== STAGE 3:  Define Pre-Requisites 
+=== STAGE 4:  Define Pre-Requisites 
 * 
 
-=== STAGE 3: Activities
+=== STAGE 4: Activities
 
-* [underline]#Activity 1:# Installing Scaledown Controller
+* Activity 1: Installing Scaledown Controller
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#install-journal-recovery-broker-ocp[7.1. Installing the scaledown controller]
 
 
-* [underline]#Activity 2:# Configure ScaleDown Controller
+* Activity 2: Configure ScaleDown Controller
 ** link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_broker_on_openshift_container_platform/#using_pod_draining_broker-ocp[7.2. Using the scaledown controller]
 
-* [underline]#Activity 3:# 
 
-
-
-=== STAGE 3:  Define Success Criteria
+=== STAGE 4:  Define Success Criteria
 
 - 
 

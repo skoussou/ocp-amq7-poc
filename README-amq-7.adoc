@@ -102,10 +102,9 @@ oc new-project amq-pocs-non-ssl
 	oc scale statefulset broker-amq --replicas=3
 
 * Activity 2a-2: Configuring OCP Environment for client access
-** Expose ADMIN Console (per broker)
+** Expose AMQ-7 JOLOKIA ADMIN Console (per broker)
    
-ADMIN CONSOLE JOLOKIA Connection
-The following results in round-robin console requests (for each new session brower or REST based) via this route to all 3 consoles
+	The following results in round-robin console requests (for each new session brower or REST based) via this route to all 3 consoles (*TBD IF ON OCP THERE IS A BETTER WAY*)
 
 	[underline]#REST#
 	REST: curl -k -u 'amq-demo-user:amqDemoPassword' http://broker-amq-0.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc/console/jolokia

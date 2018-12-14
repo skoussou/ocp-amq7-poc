@@ -204,11 +204,11 @@ oc new-project amq-pocs-non-ssl
 
 **** *TEST 2*
 
-        ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples
+	ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples
 	mvn clean package dependency:copy-dependencies -DincludeScope=runtime -DskipTests -s example-settings.xm;
 
 	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
-	jndi.properties|-
+	Ensure ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/target/classes/jndi.properties|-
 			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
 			connectionfactory.myFactoryLookup = amqp://192.168.42.196:30001
 			queue.myQueueLookup = demoQueue
@@ -216,7 +216,7 @@ oc new-project amq-pocs-non-ssl
 
 
 * Activity 2a-3: Scaling set of clustered SSL brokers (scale controller)
-** Activity 1: Install ScaleDown controller in namespace *amq-pocs-non-ss*
+** Activity 1: Install ScaleDown controller in namespace *amq-pocs-non-ssl*
 
 	oc create -n amq-pocs-non-ssl -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
 
@@ -262,9 +262,9 @@ Sending messaging with no consumers and watching the jolokia web-consoles of the
 
 
 
+----
 
-
-==== STAGE 2B: SSL Clustered & Persistent Installation
+==== STAGE 2b: SSL Clustered & Persistent Installation
 
 
 
@@ -477,9 +477,12 @@ oc new-project amq-pocs
 
 see above *Activity 2a-3* for siilar work
 
+----
 
 ==== STAGE 2C: Deploying a broker with custom configuration
 *TBD*
+
+----
 
 ==== STAGE 2D: Deploying a basic broker with persistence and SSL
 *TBD*

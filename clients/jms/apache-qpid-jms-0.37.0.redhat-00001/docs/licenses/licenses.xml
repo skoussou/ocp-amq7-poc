@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licenseSummary>
+  <dependencies>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-buffer</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec-http</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-common</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-handler</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-resolver</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport-native-epoll</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport-native-kqueue</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport-native-unix-common</artifactId>
+      <version>4.1.28.Final-redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17.redhat-2</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_2.0_spec</artifactId>
+      <version>1.0.0.alpha-2-redhat-2</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.qpid</groupId>
+      <artifactId>proton-j</artifactId>
+      <version>0.29.0.redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.qpid</groupId>
+      <artifactId>qpid-jms-client</artifactId>
+      <version>0.37.0.redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.qpid</groupId>
+      <artifactId>qpid-jms-discovery</artifactId>
+      <version>0.37.0.redhat-00001</version>
+      <licenses>
+        <license>
+          <name>Apache Software License, Version 2.0</name>
+          <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.25.redhat-00001</version>
+      <licenses>
+        <license>
+          <name>The MIT License</name>
+          <url>http://repository.jboss.org/licenses/mit.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.25.redhat-00001</version>
+      <licenses>
+        <license>
+          <name>The MIT License</name>
+          <url>http://repository.jboss.org/licenses/mit.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+  </dependencies>
+</licenseSummary>

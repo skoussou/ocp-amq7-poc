@@ -1,8 +1,8 @@
 = Purpose of Repository
 
-This repository provides information and guidance on installing and testing AMQ 7 in OCP Environments based on two architecture and Operational Models
+This repository provides information and guidance on installing and testing AMQ 7 in OCP Environments explaining different architectures and Operational Models
 
-* Guidance on POC with AMQ 7   link:README-amq-7.adoc[Traditional broker management/operations ]
-* Guidance on POC with AMQ 7   link:README-amq-7-enmass-interconnect.adoc[Mesh of Messaging Routers and Brokers]
+* Guidance on POC with AMQ 7   link:README-amq-7.adoc[Traditional broker only management/operations with scale down controllers for message migration on OCP]
+* Guidance on POC with AMQ 7   link:README-amq-7-interconnect.adoc[Mesh of Messaging with Interconnect Routers and AMQ Brokers]
 * Guidance on POC with AMQ 7   link:README-amq-online-7.adoc[as a Messaging Service (enmass) on OCP]
 

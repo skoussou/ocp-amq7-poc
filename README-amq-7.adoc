@@ -58,10 +58,10 @@ for template in amq-broker-72-basic.yaml \
 ---
 
 
-== STAGE 2:  Install Broker in Clustered (both Non-SSL & SSL) and Persistent Mode (3 PODs) (This to be defined)
+== STAGE 2:  Install Broker in Clustered (both Non-SSL & SSL) and Persistent Mode (3 PODs)
 
 === STAGE 2:  Define Pre-Requisites 
-- Compatible Storage available in the cluster
+- Compatible Storage available in the cluster (some storage class created by OCP Admin)
 - Enough Resources
 - ROUTER to allow wildcard for subdomains see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html-single/installation_and_configuration/#using-wildcard-routes[4.2.18. Using Wildcard Routes (for a Subdomain)]
 
@@ -70,7 +70,7 @@ for template in amq-broker-72-basic.yaml \
 
 ==== STAGE 2a: NON-SSL Clustered & Persistent Installation
 
-* Activity 2s: Create namespce *amq-pocs-non-ssl" to host all AMQ7 required objects
+* Activity 2a-0: Create namespce *amq-pocs-non-ssl" to host all AMQ7 required objects
 
 [souce, bash]
 ----
@@ -103,9 +103,9 @@ oc new-project amq-pocs-non-ssl
 
 * Activity 2a-2: Configuring OCP Environment for client access
 ** Expose ADMIN Console (per broker)
-   ADMIN CONSOLE JOLOKIA Connection
    
-	The following results in round-robin console requests (for each new session brower or REST based) via this route to all 3 consoles
+ADMIN CONSOLE JOLOKIA Connection
+The following results in round-robin console requests (for each new session brower or REST based) via this route to all 3 consoles
 
 	[underline]#REST#
 	REST: curl -k -u 'amq-demo-user:amqDemoPassword' http://broker-amq-0.broker-amq-headless-console-jolokia.amq-pocs-non-ssl.svc/console/jolokia

@@ -280,7 +280,9 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 
 
 
-=== Scenario 1
+=== Test Interconnect Scenario 1
+
+*Aim: Showcase transparrent connection to brokers via interconnect for both brokered and direct communications*
 
 * Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
 ** Configure interconnect *router-1* to access  *broker-a* and *broker-b*
@@ -305,8 +307,6 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
        port: 61616
        saslMechanisms: ANONYMOUS
     }
-
-
 
 
 ** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-a* (both in/out ie. write/read)
@@ -340,7 +340,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
     }
 
 
-** No Configuraton on interconnect *router-1* to give accss to address *dq2* 
+** No Configuraton on interconnect *router-1* to give access to address *dq2* 
 
 ** Go to OCP console on Applications-->Deployments-->router-1 (Press the *Deploy*) to take effect on the changes
 
@@ -393,19 +393,20 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
 *Important:* To understand the behavior better around this loadbalancing and routing look at the documentation link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#message_routing[Message Routing] and read again the latter setions of the ConfigMap to see the address routing pre-configurations
 
 
-
+---
 
 
 ==== Test Interconnect Scenario 2
 
-* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
-** All configs exist as in Scenario
-** Configure interconnect *router-1* to give access to address *dq2* on *broker-c* (both in/out ie. write/read) - This would showcase no changes to end-clients whilst topology changes behind the interconnect
+*Aim: Showcase no changes to end-clients whilst topology changes behind the interconnect*
+
+* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* and *broker-c* addresses
+** All configs remain as in Scenario
+** Configure interconnect *router-1* to access in addition *broker-c* and *broker-b*
 
     Either via the OCP console access Resources-->Config Maps-->router-1 (click on it, Actions, Edit Yaml) add the following
     or
     oc edit cm router-1
-
 
     connector {        
        name: broker-c
@@ -414,6 +415,9 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
        port: 61616
        saslMechanisms: ANONYMOUS
     }
+
+
+** Configure interconnect *router-1* to give access to address *dq2* on *broker-c* (both in/out ie. write/read) - This would showcase no changes to end-clients whilst topology changes behind the interconnect
 
     linkRoute {
        prefix: dq2
@@ -442,7 +446,6 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
 			queue.myQueueLookup = dq2
 			topic.myTopicLookup = demoTopic
 
-	*IMPORTANT*: the way this works is because both the consumer & producer are connected at the time and the *router-1* routes the message directly
 
 
 * Resulting Topology
@@ -466,20 +469,168 @@ image:pics/amq-interconnect-console-router-1-Topology-C.png["Topology 3 Brokers"
 	  8   127.0.0.1:53270                                           47056f3e-a647-4076-bb9b-a7583f3fbf3e  normal           in   no-security  no-auth 
 
 
+** *RESULT*: Successfully changed so that
+*** brokers increased from 2 to 3
+*** dq2 can now be located on broker-c
+*** without changing clients
+
+---
+
+
+
+
+=== Test Interconnect Scenario 3
+
+*Aim: Showcase no changes to end-clients whilst topology changes behind the interconnect*
+
+* Resources Read
+** What is link:https://qpid.apache.org/releases/qpid-dispatch-1.2.0/man/qdrouterd.conf.html#_autolink[autoLink configuration]
+** What are link:https://qpid.apache.org/releases/qpid-dispatch-1.2.0/man/qdrouterd.conf.html#_address[waypoint addresses]
+** Differences between link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#addresses[mobile and link route addresses]
+
+* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* and *broker-c* addresses
+** All configs to remain as in Scenario
+** Configure interconnect *router-1* to give access to address:
+*** *demoQueue* on on *broker-a* and *broker-b* via *autoLink* (mobile Address) 
+
+    Either via the OCP console access Resources-->Config Maps-->router-1 (click on it, Actions, Edit Yaml) add the following
+    or
+    oc edit cm router-1
+
+    address {
+      prefix: demoQueue
+      waypoint: yes
+    }
+
+    autoLink {
+       addr: demoQueue
+       connection: broker-a
+       direction: in
+    }
+
+    autoLink {
+       addr: demoQueue
+       connection: broker-a
+       direction: out
+    }
+
+    autoLink {
+       addr: demoQueue
+       connection: broker-b
+       direction: in
+    }
+
+    autoLink {
+       addr: demoQueue
+       connection: broker-b
+       direction: out
+    }
+
+
+***  *dq2* on *broker-c* (both in/out ie. write/read) 
+
+    address {
+      prefix: dq2
+      waypoint: yes
+    }
+
+    autoLink {
+       addr: dq2
+       connection: broker-c
+       direction: in
+    }
+
+    autoLink {
+       addr: dq2
+       connection: broker-c
+       direction: out
+    }
+
+** Go to OCP console on Applications-->Deployments-->router-1 (Press the *Deploy*) to take effect on the changes
+
+
+
+* *Test-1* - Sending messages repeatedly to address *demoQueue* (by executing the following) results in the router "loadbalancing" writes/reads between  *broker-a* and *broker-b* (verify by looking at both on Queue *demoQueue* and the number of messages written/acknowledged/read)
+
+	cd ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/
+	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
+
+	Ensure ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/target/classes/jndi.properties|-
+			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
+			connectionfactory.myFactoryLookup = amqp://192.168.42.67:30002
+			queue.myQueueLookup = demoQueue
+			topic.myTopicLookup = demoTopic
+
+
+* *Test-2* - Sending messages repeatedly to address *dq2* (by executing the following) results in the router correctly routing messages to *broker-c* (verify by looking at both on Queue *dq2* and the number of messages written/acknowledged/read)
+
+	cd ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001-dq2/examples/
+	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
+
+	Ensure ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/target/classes/jndi.properties|-
+			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
+			connectionfactory.myFactoryLookup = amqp://192.168.42.67:30002
+			queue.myQueueLookup = dq2
+			topic.myTopicLookup = demoTopic
+
+
+
+* Resulting Topology
+
+The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
+
+
+** Facility *qdstat* shows on the router pod 
+*** 2 *in connections* from the console and the no-auth port as well as
+*** 2 *out connections* to the 2 brokers
+
+	$ oc exec router-1-8-fz2n9 -it -- qdstat -c
+	Connections
+	  id  host                                                      container                             role             dir  security     authentication  tenant
+	  ===============================================================================================================================================================
+	  1   broker-c-amq-headless.amq-pocs-interconnectors.svc:61616  broker-c                              route-container  out  no-security  anonymous-user  
+	  2   broker-b-amq-headless.amq-pocs-interconnectors.svc:61616  broker-b                              route-container  out  no-security  anonymous-user  
+	  3   broker-a-amq-headless.amq-pocs-interconnectors.svc:61616  broker-a                              route-container  out  no-security  anonymous-user  
+	  6   172.17.0.1                                                b24bd2e9-a818-e246-950c-d65d422fb04f  normal           in   no-security  no-auth         
+	  11  127.0.0.1:43524                                           bb36e3c2-54c6-4bf9-895a-09a40eda1b82  normal           in   no-security  no-auth    
+
+*** 6 AutoLinks
+
+	$ oc exec router-1-8-fz2n9 -it -- qdstat --autolinks
+	AutoLinks
+	  addr       dir  phs  extAddr  link  status  lastErr
+	  =====================================================
+	  demoQueue  in   1             18    active  
+	  demoQueue  out  0             19    active  
+	  demoQueue  in   1             16    active  
+	  demoQueue  out  0             17    active  
+	  dq2        in   1             14    active  
+	  dq2        out  0             15    active 
+
+
+** *RESULT*: Successfully changed so that
+*** brokers remain to 3
+*** demoQueue messages loadbalanced between *broker-a* and *broker-b*
+*** dq2 can now be located on *broker-c*
+*** without changing clients
+
+---
 
 
 
 
 
-=== Scenario 3
 
-test by setting dq2 aso on broer-b
 
-=== Scenario 4
+
+
+
+
+=== Test Interconnect Scenario 4
 
 Now create a mesh with autoLink to the addresses and adding a new router-2 and maybe router-3 so that not only one router contains links to brokers
 
-
+https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#path_redundancy_and_temporal_decoupling
 
 
 

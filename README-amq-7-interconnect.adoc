@@ -7,7 +7,7 @@ Resources:
 
 * link:https://developers.redhat.com/blog/2018/05/17/scaling-amq-7-brokers-with-amq-interconnect/[Scaling AMQ 7 Brokers with AMQ Interconnect] (Git Repo)
 * link:https://www.youtube.com/watch?v=nVf5e97rvgQ[AMQ 7 and Microservices: Messaging for Everything] (Video)
-* MAQ 7 Interconnectors:  link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#theory_of_operation[Theory of Operations] (Using Interconnect Guide)
+* AMQ 7 Interconnectors:  link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#theory_of_operation[Theory of Operations] (Using Interconnect Guide)
 
 == STAGE 1:  Install all necessary components (templates, images/streams) and preps
 
@@ -43,7 +43,7 @@ To authenticate clients against user name and password pairs stored in a SASL da
 
 Setting up 3 brokers which are Stateful Sets with single instance 
 
-* *AMQ Broker - A* Deployment (*IMPORTANT*: This AMQ Broker contains Queue: *DemoQueue*)
+* *AMQ Broker - A* Deployment (*IMPORTANT*: This AMQ Broker contains Queue: *demoQueue*)
 
 	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-a \
@@ -89,7 +89,7 @@ Setting up 3 brokers which are Stateful Sets with single instance
 
 
 
-* *AMQ Broker - B* Deployment (*IMPORTANT*: This AMQ Broker contains 2 Queues *DemoQueue* and *dq2*)
+* *AMQ Broker - B* Deployment (*IMPORTANT*: This AMQ Broker contains 2 Queues *demoQueue* and *dq2*)
 
 	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-b \
@@ -186,15 +186,17 @@ Setting up 3 brokers which are Stateful Sets with single instance
 
 == STAGE 3:  AMQ Interonnect Setup
 
+
 === Prerequisites
 
 To deploy and test this topology, you should have 
+
 * at least one AMQ 7 broker deployed and running on some host. If you have more instances, all of them should work in the same cluster definition.
 * Samples will work with a set of queues that you should define in your AMQ 7 brokers. To do that, please add to address section of the  $AMQ_BROKER/etc/broker.xml file the following definitions (or as above via the template)
 	
-	<address name="DemoQueue">
+	<address name="demoQueue">
 	  <anycast>
-	    <queue name="DemoQueue" />
+	    <queue name="demoQueue" />
 	  </anycast>
 	</address>
 
@@ -309,7 +311,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
     }
 
 
-** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-a* (both in/out ie. write/read)
+** Configure interconnect *router-1* to give access to address *demoQueue* on *broker-a* (both in/out ie. write/read)
 
 
     linkRoute {
@@ -325,7 +327,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
     }
 
 
-** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-b* (both in/out ie. write/read)
+** Configure interconnect *router-1* to give access to address *demoQueue* on *broker-b* (both in/out ie. write/read)
 
     linkRoute {
        prefix: demoQueue
@@ -345,7 +347,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 ** Go to OCP console on Applications-->Deployments-->router-1 (Press the *Deploy*) to take effect on the changes
 
 
-* *Test-1* - Sending messages repeatedly to address *demoQueue* (by executing the following) results in the router "loadbalancing" writes/reads between  *broker-a* and *broker-b* (verify by looking at both on Queue *DemoQueue* and the number of messages written/acknowledged/read)
+* *Test-1* - Sending messages repeatedly to address *demoQueue* (by executing the following) results in the router "loadbalancing" writes/reads between  *broker-a* and *broker-b* (verify by looking at both on Queue *demoQueue* and the number of messages written/acknowledged/read)
 
 	cd ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/
 	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld

@@ -240,7 +240,7 @@ To deploy and test this topology, you should have
 
 * Expose Interconnect *router-1* AMQP Port over service  (8672) (*IMPORTANT*: Using NodePort takes place due to inability to go over (8)443 with correct SSL certificates. *It is not recommended practice to use NodePort* instead use OCP Route with correct SSL certificates)
 
-echo 'apiVersion: v1
+	echo 'apiVersion: v1
 	kind: Service
 	metadata:
 	  labels:
@@ -284,9 +284,89 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 
 * Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
 ** Configure interconnect *router-1* to access  *broker-a* and *broker-b*
-** Configure interconnect *router-1* to give accss to address *DemoQueue* on *broker-a*
-** Configure interconnect *router-1* to give accss to address *DemoQueue* on *broker-b*
-** Configure interconnect *router-1* to give accss to address *dq2* on *WRONG-BROKER*
+
+	Either via the OCP console access Resources-->Config Maps-->router-1 (click on it, Actions, Edit Yaml) add the following
+	or
+	oc edit cm router-1
+
+	connector {
+            name: broker-a
+            role: route-container
+            host: broker-a-amq-headless.amq-interconnectors.svc 
+            port: 61616
+            saslMechanisms: ANONYMOUS
+    	}
+
+	connector {
+            name: broker-b
+            role: route-container
+            host: broker-b-amq-headless.amq-interconnectors.svc 
+            port: 61616
+            saslMechanisms: ANONYMOUS
+    	}
+
+
+** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-a* (both in/out ie. write/read)
+
+	Either via the OCP console access Resources-->Config Maps-->router-1 (click on it, Actions, Edit Yaml) add the following
+	or
+	oc edit cm router-1
+
+    	linkRoute {
+            prefix: demoQueue
+            connection: broker-a
+            direction: in
+    	}
+
+    	linkRoute {
+            prefix: demoQueue
+            connection: broker-a
+            direction: out
+    	}
+
+** Configure interconnect *router-1* to give access to address *DemoQueue* on *broker-b* (both in/out ie. write/read)
+
+    	linkRoute {
+            prefix: demoQueue
+            connection: broker-b
+            direction: in
+    	}
+
+    	linkRoute {
+            prefix: demoQueue
+            connection: broker-b
+            direction: out
+    	}
+
+** No Configuraton on interconnect *router-1* to give accss to address *dq2* 
+
+
+==== Test Interconnect Scenario 1
+
+* *Test-1* - Sending messages repeatedly to address *demoQueue* (by executing the following) results in the router "loadbalancing" writes/reads between  *broker-a* and *broker-b* (verify by looking at both on Queue *DemoQueue* and the number of messages written/acknowledged/read)
+
+	cd ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/
+	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
+
+	Ensure ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/target/classes/jndi.properties|-
+			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
+			connectionfactory.myFactoryLookup = amqp://192.168.42.67:30002
+			queue.myQueueLookup = demoQueue
+			topic.myTopicLookup = demoTopic
+
+
+* *Test-2* - Sending messages repeatedly to address *dq2* (by executing the following) results in the router correctly routing back a response to the *producer/consumer* HelloWorld program
+
+	cd ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001-dq2/examples/
+	java -DUSER="amq-demo-user" -DPASSWORD="amqDemoPassword" -cp "target/classes/:target/dependency/*" org.apache.qpid.jms.example.HelloWorld
+
+	Ensure ocp-amq7-poc/clients/jms/apache-qpid-jms-0.37.0.redhat-00001/examples/target/classes/jndi.properties|-
+			java.naming.factory.initial = org.apache.qpid.jms.jndi.JmsInitialContextFactory
+			connectionfactory.myFactoryLookup = amqp://192.168.42.67:30002
+			queue.myQueueLookup = dq2
+			topic.myTopicLookup = demoTopic
+
+	*IMPORTANT*: the way this works is because both the consumer & producer are connected at the time and the *router-1* routes the message directly
 
 
 === Install Interconnect Router-2

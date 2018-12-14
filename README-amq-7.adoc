@@ -216,7 +216,7 @@ oc new-project amq-pocs-non-ssl
 
 
 * Activity 2a-3: Scaling set of clustered SSL brokers (scale controller)
-** Activity 1: Install ScaleDown controller in namespace *amq-pocs-non-ssl*
+** Install ScaleDown controller in namespace *amq-pocs-non-ssl*
 
 	oc create -n amq-pocs-non-ssl -f https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/amq-broker-72-persistence-clustered-controller.yaml
 
@@ -262,7 +262,7 @@ oc new-project amq-pocs-non-ssl
 
 
 
-----
+---
 
 ==== STAGE 2b: SSL Clustered & Persistent Installation
 

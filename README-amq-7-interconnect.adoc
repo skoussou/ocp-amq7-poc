@@ -22,6 +22,7 @@ Resources:
 
 	(the templates are now also available also under /amq-7-templates)
 
+	oc login -u system:admin
 	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-basic.yaml | oc create -f - -n openshift
 	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-tls-auth.yaml | oc create -f - -n openshift
 	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-sasldb-auth.yaml | oc create -f - -n openshift
@@ -135,7 +136,7 @@ Setting up 3 brokers which are Stateful Sets with single instance
 	eg. http://console-jolokia-broker-b-amq-pocs-interconnectors.192.168.42.67.nip.io 
 
 
-* *AMQ Broker - C* Deployment (*IMPORTANT*: This AMQ Broker contains Queue:*dq2*)
+* *AMQ Broker - C* Deployment (*IMPORTANT*: This AMQ Broker contains Queue: *dq2*)
 
 	oc new-app --template=amq-broker-72-persistence \
         -p=APPLICATION_NAME=broker-c \
@@ -178,7 +179,7 @@ Setting up 3 brokers which are Stateful Sets with single instance
 
 ** *Test* access to the web console for *AMQ Broker - C*
 
-	Login with amq-demo-user/amqDemoPassword on the link of the *console-jolokia-broker-b* route
+	Login with amq-demo-user/amqDemoPassword on the link of the *console-jolokia-broker-c* route
 	eg. http://console-jolokia-broker-c-amq-pocs-interconnectors.192.168.42.67.nip.io 
 	
 
@@ -200,21 +201,107 @@ To deploy and test this topology, you should have
 
 === Install Interconnect Router-1
 
+	You can inspect the interconnect template installed earlier
+	oc describe template amq-interconnect-1-basic -n openshift
+
+* Interconnect exposes the following ports (we will direct traffic to *5672 (AMQP no-auth)* and *8672 (web console)*
+
+	Target Port.
+	5672		External clients or message brokers to connect to the router mesh without authentication
+	5671 		External clients or message brokers to connect to the router mesh with authentication
+	55672		External routers to connect to the router mesh
+	8672		Accessing the web console
+
+* Create *router-1*
+
+	oc new-app  --template=amq-interconnect-1-basic -pAPPLICATION_NAME=router-1 -l app=interconnect -n amq-pocs-non-ssl
+
+* Create OCP Route to Interconnect *router-1* - WEB Console OCP Route (8672)
+
+	echo 'apiVersion: route.openshift.io/v1
+	kind: Route
+	metadata:
+	  labels:
+	    application: router-1
+	    app: interconnect 
+	  name: router-1-web-console
+	spec:
+	  host: router-1-web-console-amq-pocs-interconnectors.192.168.42.67.nip.io
+	  port:
+	    targetPort: 8672
+	  to:
+	    kind: Service
+	    name: router-1
+	    weight: 100
+	  wildcardPolicy: None
+	status:
+	  loadBalancer: {}' | oc create -f - -n amq-pocs-interconnectors
+
+
+* Expose Interconnect *router-1* AMQP Port over service  (8672) (*IMPORTANT*: Using NodePort takes place due to inability to go over (8)443 with correct SSL certificates. *It is not recommended practice to use NodePort* instead use OCP Route with correct SSL certificates)
+
+echo 'apiVersion: v1
+	kind: Service
+	metadata:
+	  labels:
+	    application: router-1
+	    app: interconnect
+	  name: router-1-external-tcp
+	spec:
+	  externalTrafficPolicy: Cluster
+	  ports:
+	   -  nodePort: 30002
+	      port: 5672
+	      protocol: TCP
+	      targetPort: 5672
+	  selector:
+	    deploymentConfig: router-1
+	  sessionAffinity: None
+	  type: NodePort' | oc create -f - -n amq-pocs-interconnectors
+
+=== Result - Initial Installation 
+
+The outcome will be 3 routes which can be used to access the content of the *3 brokers* and the interconnect *router-1*
+
+image:pics/amq-interconnect-Routes-interconnect-1-brokers-3-consoles.png["Routes for Consoles",height=240] 
+
+The topology in *router-1* web-console will be showing only the router and its console connected
+
+image:pics/amq-interconnect-console-router-1.png["Topology Initial",height=240] 
+
+Facility *qdstat* shows on the router pod 2 *in connections* from the console and the no-auth port
+
+	$ oc exec router-1-1-dbb9h -it -- qdstat -c
+	Connections
+	  id  host             container                             role    dir  security     authentication  tenant
+	  =============================================================================================================
+	  2   172.17.0.1       bb15316c-db9a-e441-b4ca-e3d30ec34919  normal  in   no-security  no-auth         
+	  3   127.0.0.1:60566  b63e1cd5-026c-41cf-907a-5c63471816f6  normal  in   no-security  no-auth     
+
+
+
+=== Scenario 1
+
+* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
+** Configure interconnect *router-1* to access  *broker-a* and *broker-b*
+** Configure interconnect *router-1* to give accss to address *DemoQueue* on *broker-a*
+** Configure interconnect *router-1* to give accss to address *DemoQueue* on *broker-b*
+** Configure interconnect *router-1* to give accss to address *dq2* on *WRONG-BROKER*
+
 
 === Install Interconnect Router-2
 
+Configured Later (Scenario Interconnect with aggregators)
 
 === Install Interconnect Router-3
 
+Configured Later (Scenario Interconnect with aggregators)
 
 
-Creating routes
 
-Target Port.
-5672		External clients or message brokers to connect to the router mesh without authentication
-5671 		External clients or message brokers to connect to the router mesh with authentication
-55672		External routers to connect to the router mesh
-8672		Accessing the web console
+
+
+
 	
 ==== Create Router NO-AUTH TCP OCP Route (5672)
 	apiVersion: route.openshift.io/v1
@@ -237,26 +324,7 @@ Target Port.
 	  wildcardPolicy: None
 
 
-==== Create Router WEB Console OCP Route (8672)
-	apiVersion: route.openshift.io/v1
-	kind: Route
-	metadata:
-	  creationTimestamp: 2018-12-07T13:37:35Z
-	  labels:
-	    app: amq-interconnect-1-basic
-	    application: amq-interconnect-basic-1
-	    template: amq-interconnect-1-basic
-	  name: router-1-web-console
-	  namespace: amq-online
-	spec:
-	  host: router-1-web-console-amq-online.192.168.42.196.nip.io
-	  port:
-	    targetPort: 8672
-	  to:
-	    kind: Service
-	    name: amq-interconnect-basic-1
-	    weight: 100
-	  wildcardPolicy: None
+
 	
 
 === Connecting clients to a router mesh

@@ -7,4 +7,5 @@ This repository provides information and guidance on installing and testing AMQ 
 * Guidance on POC with AMQ 7   link:README-amq-online-7.adoc[as a Messaging Service (enmass) on OCP]
 
 For non-OCP work with all of the above refer to following workshop lab material
+
 * Red Hat JBoss AMQ 7 link:https://redhatworkshops.github.io/amqv7-workshop/index.html[Labs]

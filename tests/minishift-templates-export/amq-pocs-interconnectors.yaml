@@ -1,0 +1,778 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: amq-pocs-interconnectors
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: interconnect
+      application: router-1
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-1
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentConfig: router-1
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 0
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: interconnect
+          application: router-1
+          deploymentConfig: router-1
+        name: router-1
+      spec:
+        containers:
+        - env:
+          - name: APPLICATION_NAME
+            value: router-1
+          - name: QDROUTERD_CONF
+            value: /etc/qpid-dispatch/qdrouterd.conf
+          - name: QDROUTERD_AUTO_MESH_DISCOVERY
+            value: QUERY
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          image: registry.access.redhat.com/amq-interconnect/amq-interconnect-1.2-openshift@sha256:6ecb1bbce62f624c70f335ba5eccf01bc9d4260d05eaa0e28e78f6582f6ee805
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8672
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router-1
+          ports:
+          - containerPort: 5672
+            name: amqp
+            protocol: TCP
+          - containerPort: 5671
+            name: amqps
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 55672
+            name: inter
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8672
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/qpid-dispatch-certs/
+            name: certs
+            readOnly: true
+          - mountPath: /etc/qpid-dispatch/
+            name: config-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router-1
+        serviceAccountName: router-1
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: router-1-cert
+        - configMap:
+            defaultMode: 420
+            name: router-1
+          name: config-volume
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - router-1
+        from:
+          kind: ImageStreamTag
+          name: amq-interconnect-1.2-openshift:latest
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: interconnect
+      application: router-2
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-2
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentConfig: router-2
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 0
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: interconnect
+          application: router-2
+          deploymentConfig: router-2
+        name: router-2
+      spec:
+        containers:
+        - env:
+          - name: APPLICATION_NAME
+            value: router-2
+          - name: QDROUTERD_CONF
+            value: /etc/qpid-dispatch/qdrouterd.conf
+          - name: QDROUTERD_AUTO_MESH_DISCOVERY
+            value: QUERY
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          image: registry.access.redhat.com/amq-interconnect/amq-interconnect-1.2-openshift@sha256:6ecb1bbce62f624c70f335ba5eccf01bc9d4260d05eaa0e28e78f6582f6ee805
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8672
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router-2
+          ports:
+          - containerPort: 5672
+            name: amqp
+            protocol: TCP
+          - containerPort: 5671
+            name: amqps
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 55672
+            name: inter
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8672
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/qpid-dispatch-certs/
+            name: certs
+            readOnly: true
+          - mountPath: /etc/qpid-dispatch/
+            name: config-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router-2
+        serviceAccountName: router-2
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: certs
+          secret:
+            defaultMode: 420
+            secretName: router-2-cert
+        - configMap:
+            defaultMode: 420
+            name: router-2
+          name: config-volume
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - router-2
+        from:
+          kind: ImageStreamTag
+          name: amq-interconnect-1.2-openshift:latest
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: broker-a
+      application: broker-a
+    name: console-jolokia-broker-a
+  spec:
+    host: console-jolokia-broker-a-amq-pocs-interconnectors.192.168.42.67.nip.io
+    port:
+      targetPort: console-jolokia
+    to:
+      kind: Service
+      name: broker-a-amq-headless
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-12-14T11:13:28Z
+        status: "True"
+        type: Admitted
+      host: console-jolokia-broker-a-amq-pocs-interconnectors.192.168.42.67.nip.io
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: brokers
+      application: broker-b
+    name: console-jolokia-broker-b
+  spec:
+    host: console-jolokia-broker-b-amq-pocs-interconnectors.192.168.42.67.nip.io
+    port:
+      targetPort: console-jolokia
+    to:
+      kind: Service
+      name: broker-b-amq-headless
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-12-14T11:20:13Z
+        status: "True"
+        type: Admitted
+      host: console-jolokia-broker-b-amq-pocs-interconnectors.192.168.42.67.nip.io
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: brokers
+      application: broker-c
+    name: console-jolokia-broker-c
+  spec:
+    host: console-jolokia-broker-c-amq-pocs-interconnectors.192.168.42.67.nip.io
+    port:
+      targetPort: console-jolokia
+    to:
+      kind: Service
+      name: broker-c-amq-headless
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-12-14T11:22:35Z
+        status: "True"
+        type: Admitted
+      host: console-jolokia-broker-c-amq-pocs-interconnectors.192.168.42.67.nip.io
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-1
+    name: router-1-web-console
+  spec:
+    host: router-1-web-console-amq-pocs-interconnectors.192.168.42.67.nip.io
+    port:
+      targetPort: 8672
+    to:
+      kind: Service
+      name: router-1
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-12-14T12:29:19Z
+        status: "True"
+        type: Admitted
+      host: router-1-web-console-amq-pocs-interconnectors.192.168.42.67.nip.io
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's headless, non load balanced service
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: brokers
+      application: broker-a
+      template: amq-broker-72-persistence
+      xpaas: 1.4.16
+    name: broker-a-amq-headless
+  spec:
+    clusterIP: None
+    ports:
+    - name: all
+      port: 61616
+      protocol: TCP
+      targetPort: 61616
+    - name: console-jolokia
+      port: 8161
+      protocol: TCP
+      targetPort: 8161
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    - name: stomp
+      port: 61613
+      protocol: TCP
+      targetPort: 61613
+    publishNotReadyAddresses: true
+    selector:
+      deploymentConfig: broker-a-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's headless, non load balanced service
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: brokers
+      application: broker-b
+      template: amq-broker-72-persistence
+      xpaas: 1.4.16
+    name: broker-b-amq-headless
+  spec:
+    clusterIP: None
+    ports:
+    - name: all
+      port: 61616
+      protocol: TCP
+      targetPort: 61616
+    - name: console-jolokia
+      port: 8161
+      protocol: TCP
+      targetPort: 8161
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    - name: stomp
+      port: 61613
+      protocol: TCP
+      targetPort: 61613
+    publishNotReadyAddresses: true
+    selector:
+      deploymentConfig: broker-b-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's headless, non load balanced service
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: brokers
+      application: broker-c
+      template: amq-broker-72-persistence
+      xpaas: 1.4.16
+    name: broker-c-amq-headless
+  spec:
+    clusterIP: None
+    ports:
+    - name: all
+      port: 61616
+      protocol: TCP
+      targetPort: 61616
+    - name: console-jolokia
+      port: 8161
+      protocol: TCP
+      targetPort: 8161
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: mqtt
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    - name: stomp
+      port: 61613
+      protocol: TCP
+      targetPort: 61613
+    publishNotReadyAddresses: true
+    selector:
+      deploymentConfig: broker-c-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The router's AMQP port.
+      openshift.io/generated-by: OpenShiftNewApp
+      service.alpha.openshift.io/serving-cert-secret-name: router-1-cert
+      service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1544776590
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-1
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-1
+  spec:
+    ports:
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: amqps
+      port: 5671
+      protocol: TCP
+      targetPort: 5671
+    - name: http
+      port: 8672
+      protocol: TCP
+      targetPort: 8672
+    - name: inter-router
+      port: 55672
+      protocol: TCP
+      targetPort: 55672
+    selector:
+      deploymentConfig: router-1
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-1
+    name: router-1-external-tcp
+  spec:
+    externalTrafficPolicy: Cluster
+    ports:
+    - port: 5672
+      protocol: TCP
+      targetPort: 5672
+    selector:
+      deploymentConfig: router-1
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The router's AMQP port.
+      openshift.io/generated-by: OpenShiftNewApp
+      service.alpha.openshift.io/serving-cert-secret-name: router-2-cert
+      service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1544776590
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-2
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-2
+  spec:
+    ports:
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: amqps
+      port: 5671
+      protocol: TCP
+      targetPort: 5671
+    - name: http
+      port: 8672
+      protocol: TCP
+      targetPort: 8672
+    - name: inter-router
+      port: 55672
+      protocol: TCP
+      targetPort: 55672
+    selector:
+      deploymentConfig: router-2
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: broker-a-amq
+    name: broker-a-amq-pvol-broker-a-amq-0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: pv0079
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: broker-b-amq
+    name: broker-b-amq-pvol-broker-b-amq-0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: pv0025
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: broker-c-amq
+    name: broker-c-amq-pvol-broker-c-amq-0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: pv0063
+  status: {}
+- apiVersion: v1
+  data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUR2VENDQXFXZ0F3SUJBZ0lJUXdYVk9reXhhWEV3RFFZSktvWklodmNOQVFFTEJRQXdOakUwTURJR0ExVUUKQXd3cmIzQmxibk5vYVdaMExYTmxjblpwWTJVdGMyVnlkbWx1WnkxemFXZHVaWEpBTVRVME5EYzNOalU1TURBZQpGdzB4T0RFeU1UUXhNVE0yTURkYUZ3MHlNREV5TVRNeE1UTTJNRGhhTURBeExqQXNCZ05WQkFNVEpYSnZkWFJsCmNpMHhMbUZ0Y1Mxd2IyTnpMV2x1ZEdWeVkyOXVibVZqZEc5eWN5NXpkbU13Z2dFaU1BMEdDU3FHU0liM0RRRUIKQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUNjNTRQTXFheXdzTGZMYkoxV0lEVldHcEJwUGI5b3dZejE5L1dQSFRvRwp3NkhYakRNUUVUUFhRcG5UZGVrWVUrQ1RsQ1IwSFJpWlNjRE01MDFQbGd3elFsblBCa0dRZGxmYWl3eGFrc2o1CjBBYkRURjVLUm1EeXA5Ly9vVldPaUVqVUt3UHI0T3YwOW5iR0UwWmRaSlBydUxQZlFhTW5tdHVOUHhSSUtSR2UKVjNnV2hhdjBOTnJKRlRzcklMeWEyTzFHd0NyRC9Vd3ZJR3hjZ2xpUjljYS9idksyVjJSSmZweXFPdE9PNFNwQgpxK2dqTlN0UFdML0N4c1VNQUxCMWtsOGhTUGs5T1ZDamJHVzdKSVlBV3BtYXdjMkErWERpUUxSZm1iSmRyU1lVClU2THVWbnZ6Ni81NXhtQVlXV1NmTk0zU0lKSHpDeHU2b2l1eGVKTitKTDBSQWdNQkFBR2pnZFF3Z2RFd0RnWUQKVlIwUEFRSC9CQVFEQWdXZ01CTUdBMVVkSlFRTU1Bb0dDQ3NHQVFVRkJ3TUJNQXdHQTFVZEV3RUIvd1FDTUFBdwpaUVlEVlIwUkJGNHdYSUlsY205MWRHVnlMVEV1WVcxeExYQnZZM010YVc1MFpYSmpiMjV1WldOMGIzSnpMbk4yClk0SXpjbTkxZEdWeUxURXVZVzF4TFhCdlkzTXRhVzUwWlhKamIyNXVaV04wYjNKekxuTjJZeTVqYkhWemRHVnkKTG14dlkyRnNNRFVHQ3lzR0FRUUJrZ2dSWkFJQkJDWVRKRGN5WWpRME5qRmxMV1ptT1RRdE1URmxPQzA0WTJFegpMVFV5TlRRd01HVmhNbVF3WWpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQTFBcGZlTmkyWmNQTTlJUmpuNUtZClU2ZFlyWUwxWk5zbHkwWEpQS21SQmRZV2x3czR3SElBVlhMUDF6eVRrbDBEMHRzSDF2NWdLcE4yT055K0NrN24KR2JSb3QwN1ZGMURZc2tYdEdKZGlUbWFCdDBNU2J5Vjl1TEtQTmM3Wm5oNmwrVFVUZ3d5ekRMNHlFSjJEa0RPawpYb1VPcGJ6Zk1lZEwrUTlqOE8zRElaaW9pZjRIMXprRmJNKzFxY25rRXB2YlJ1cjZnREd2Y3h5czd3NmRyU3pYCmZBdDNEcUlORWxmU1VkM21kVnlFVlBOQjJvZGtTbUJQK1BIdHRYRXQ1NnBiMlUyMDIxWC90bTFZWnZPZmlDRmUKSG5UZFdYUEk0RHlJMThNQmMwRVg3MU4yZ01QeDZJZE03Q2w0RUJwb0Vlc0FlN1dWN2txY2c0dW1wakVNZU9rYgo5Zz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDakNDQWZLZ0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREEyTVRRd01nWURWUVFEREN0dmNHVnUKYzJocFpuUXRjMlZ5ZG1salpTMXpaWEoyYVc1bkxYTnBaMjVsY2tBeE5UUTBOemMyTlRrd01CNFhEVEU0TVRJeApOREE0TXpZek1Gb1hEVEl6TVRJeE16QTRNell6TVZvd05qRTBNRElHQTFVRUF3d3JiM0JsYm5Ob2FXWjBMWE5sCmNuWnBZMlV0YzJWeWRtbHVaeTF6YVdkdVpYSkFNVFUwTkRjM05qVTVNRENDQVNJd0RRWUpLb1pJaHZjTkFRRUIKQlFBRGdnRVBBRENDQVFvQ2dnRUJBT2dPbWpjenBxcC9UMmJWdTJWUEtYN2xxQy8wT2JXY2tyVmhyS2s4WVVkcQpsbjMwRDErN2NDeTlPRGlFM0N2UStKQTFuZTloZmVOVE11bTNDYm5jWlg2WlB5YkdoS2Q1bUYxRmhXYzhIWTRBCmo0dUJBakpzR25SZTRlK0lSN21VTElZcmV2aDMrL2luUi9jZy82YTYwZGllV1NQRTc3SjdqWER4RWlwQzY2d1cKYjU1M3dON2dYendwYTdwbTdPditGQ3ZkWForYWkvS2JaWmJSbkVjd0NOREZJWS85c3YwbHc4dW4yY0JIUVdmRAo4SHRsVitTZUhxK211cW4yNGZ5U0pWQXZsUjFsMzFvUXRscVNTR08wNjdEeTNETnNUN0pINWRIKzNMUXBMMUJ2Cm91WkVwV1FSbTJPMHR3WTc5M2tsSVBTWXdJNHpUQS93RWVnS2FsV2Z6clVDQXdFQUFhTWpNQ0V3RGdZRFZSMFAKQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUd0YQpwQnZydjVVMjVrYzBLZytyRnhLOVlRNmhydVR1MDNObG8vejdCOXROb2R4Y1lRaHN5NG5zR1BnTjI5MEpoQmh4Ck9RNnB1T0hNZkxOY3N3aDR3eDFBRDB1YmpRTjc1ZUVzZVlpdWZEd0NUQjZTOExZem9mVVQzeDFITnpjd241Q2MKZXFvNTMxWFdCNVNHVHpMMHNCeEtlYkdHWlhYbHIxRFRVTDUrNmVsZ3ZTMW1uZlcyaHgxMmRXUTVvQ0EvcERlSAowdUdWVjRScCtIS0FGbUNVQWZKeFUyOVRQZitoN3dobW51bVZDMkFET2JFWFhqSXExUVl2Zy9mZ01wTTFwcHkvClpIOCtCbUdjR2FZTXcxa3FiS2hiZVIxbjNXa01HUkE4d3BtN1UrZTdud0xwbmM4TXNSVVlnTmxXVk5ROCtQUGoKdDRJWXU5VTZTQ3BTZ0F6dzhIST0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBbk9lRHpLbXNzTEMzeTJ5ZFZpQTFWaHFRYVQyL2FNR005ZmYxangwNkJzT2gxNHd6CkVCRXoxMEtaMDNYcEdGUGdrNVFrZEIwWW1VbkF6T2ROVDVZTU0wSlp6d1pCa0haWDJvc01XcExJK2RBR3cweGUKU2taZzhxZmYvNkZWam9oSTFDc0Q2K0RyOVBaMnhoTkdYV1NUNjdpejMwR2pKNXJialQ4VVNDa1JubGQ0Rm9Xcgo5RFRheVJVN0t5QzhtdGp0UnNBcXcvMU1MeUJzWElKWWtmWEd2Mjd5dGxka1NYNmNxanJUanVFcVFhdm9JelVyClQxaS93c2JGREFDd2RaSmZJVWo1UFRsUW8yeGx1eVNHQUZxWm1zSE5nUGx3NGtDMFg1bXlYYTBtRkZPaTdsWjcKOCt2K2VjWmdHRmxrbnpUTjBpQ1I4d3NidXFJcnNYaVRmaVM5RVFJREFRQUJBb0lCQUcxYjk4TDRLQUxteU5PaQpHbTlpOTRuUjdnRk1KbEx2UkQ1VDJ2VXEyN3pITWRBNFNZYlRWcHljTVBidjRjMHcrUUFqYXR6N1FwL2toZHJMCkJGbUtMV3EwdmovTERudVA0Ri9VTm9JU2VMMlZQb0YwZ3V1bDdnQnkvVzhBbGM5SU1lcWZLSmFKS0N5T2MrNU8KbE9hWEtYcE1QQ0pKYjF3MVZQMDNqLzFUa3BJWE1ad0RwODRBNGpSemVqdUNER00yNGZ6ejhwYmRDTUJHeWptYQpVMm0ySWxLZmJDa2s1SDVnZnRWai9oZkRtR2tWT0pGMmVqdGRTMFp2SXRFZ1F5eVJEYTZRV0krSStWVXkvSUtUCkJXc1ZBQk1HdEFYN2k1MGw1ZWtYU3NSRFVUUDg3d0FMbGU0cmIrdzl1NWFKaEY1YzJiaWVLcDRYTHcyV3VXSkgKU1V1L1Qza0NnWUVBeVdzQWxNNFVleFp1NG0reEp3ZkN4aXpNVUZMaVE2MjBwTndFbGxZNktwVzZkYnBKajZZTwp3UmhieitQRnJwRW5rQ2ZVTTZLN2JXNXhoeWNtTWkzdHhmcmwrZVZmdWN4T2JPQVY0aUo4S0s5T2hHWEJjVksyCklmNm8xcFdUMXE1enBKZzkvZGU2anNScm53TU91SCtpVHFkc3ptNVpvQzlGQXlsdUJjYnpzRjhDZ1lFQXgyeDIKZHIyRmE3MXNYdEFsK2QxY1c4aTd0ZUtUUzY4d2c5cWhUc0pTRS90VjB4OHRReXhuZEpna3ZJOTlpYUVzanJ2TAp5anY2bnZHYVN2TnJSQVhIT0p3ZjgySkp2WmFuSmZDNkExSXhSNUhveUZXczhXWmxhMmszclZoOXpRZjZMdU5FCnVScWE0TUIvZ2xod0lKNDUyRmtIZWQvYk9yVXlYbGIzQk5PbHlJOENnWUVBdEtrY1VWeHk5R0NQdnR6TitpTTAKNmdvK2pJRjdYNWNMNDU5UklnTmZrdGpQOFU3Uk1sNlE5MVBBN2p2d0VQOHpqRktkUEY5blcrVm5RUUcxZWViRwpVZ0VVakV2WHk5QmNPNzNYQXdsSmNqaWo1WTlicmlpeEl0YkhYQW00SENSSHA4ZkNPdEJvRGl4U0Y4Tm5UY2QxCnJyVHZuRTFRYUtSZGMxT1MwdTI3b0dNQ2dZRUFoTGE3eDUyc2t0ekdwL3BocTMwVEg4bmdrZFN0TGFyeTRHeTQKK003OURHc3czSVZjKzkwckpENjBCQUNDRFB1RHlhRlVwOHR1cUNRbENFZ2lWR3g3L2tKNFNPSmFMSjk3c1JZWQoxR2o0ZnFhdGdkVHllTndxRm1jNU5GVTFzeUxoN2g0MDkvS3FxM092NTdDdlBpWE9YUm95alhyYVRLR1ZXWThLCmFOM284Q1VDZ1lBNnNZa3ZZZkg5Snl6Y24zUFIvaGFJTkNtek1IbThZVGNOMnRPeDl5QnlXNSt2aDdoV2gxR3gKNGt2U3JsNGxOZklKVGx0SUpFbXR2VEozb21FeTV2TnFwQjNHdU1TMXMvaUsyY0NGZmF2ck5HcnNQS3VSVnJCMQpab1VNZjB2TDJHVzB6OUVlL3FCNTEyUXNUTEVxS215c0ZoNEZKOXRGSXljeVlsb1drL1JPUVE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+  kind: Secret
+  metadata:
+    annotations:
+      service.alpha.openshift.io/expiry: 2020-12-13T11:36:08Z
+      service.alpha.openshift.io/originating-service-name: router-1
+      service.alpha.openshift.io/originating-service-uid: 72b4461e-ff94-11e8-8ca3-525400ea2d0b
+    creationTimestamp: null
+    name: router-1-cert
+    ownerReferences:
+    - apiVersion: v1
+      kind: Service
+      name: router-1
+      uid: 72b4461e-ff94-11e8-8ca3-525400ea2d0b
+  type: kubernetes.io/tls
+- apiVersion: v1
+  data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUR2VENDQXFXZ0F3SUJBZ0lJS25UVmhCSFdWMnd3RFFZSktvWklodmNOQVFFTEJRQXdOakUwTURJR0ExVUUKQXd3cmIzQmxibk5vYVdaMExYTmxjblpwWTJVdGMyVnlkbWx1WnkxemFXZHVaWEpBTVRVME5EYzNOalU1TURBZQpGdzB4T0RFeU1UUXlNek01TWpWYUZ3MHlNREV5TVRNeU16TTVNalphTURBeExqQXNCZ05WQkFNVEpYSnZkWFJsCmNpMHlMbUZ0Y1Mxd2IyTnpMV2x1ZEdWeVkyOXVibVZqZEc5eWN5NXpkbU13Z2dFaU1BMEdDU3FHU0liM0RRRUIKQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUNYYnhudW9GUzZKbW9wV2dQbDJQdE80bVB3dmZzY1puZ3BIRnRhQXh1ZgpWK3Aya3ZIMXg1aUdMN0tvZFY0RnF2blBiaDhnc0NXNXh4NE1RVjRjdWxiVkgvODJ6bmhvelBQWjJaQ1g5d3BVCjcrOGtkWWE0ZC9ET0NQVWFGWmc5MG43WWowaTVmUkF6QkloY2g4ZTZ3akg4cEttSkZIeU10OE5OME1PZEFkbUEKUTFCdlIyZ0JlQlJ4VE94L1hrRlNIUnM0OFRCRGExVnVYWmN5VWFkTlZJY2VWNFByYmZ1dUFGZlE1YWtwU01nOQoxZTZXMzFTMmtYSEdqVS9RZkMxZDl6WS9GdWM1REpiak16NTZSWkcrdXhnUDVIa21rMU5laWdmYWY0WmxPVzBHCml3OVdVamhIR25adVFqNVVMSjRpcDYrN0FhOTdWMnkyVUhraE1zTExWTXQvQWdNQkFBR2pnZFF3Z2RFd0RnWUQKVlIwUEFRSC9CQVFEQWdXZ01CTUdBMVVkSlFRTU1Bb0dDQ3NHQVFVRkJ3TUJNQXdHQTFVZEV3RUIvd1FDTUFBdwpaUVlEVlIwUkJGNHdYSUlsY205MWRHVnlMVEl1WVcxeExYQnZZM010YVc1MFpYSmpiMjV1WldOMGIzSnpMbk4yClk0SXpjbTkxZEdWeUxUSXVZVzF4TFhCdlkzTXRhVzUwWlhKamIyNXVaV04wYjNKekxuTjJZeTVqYkhWemRHVnkKTG14dlkyRnNNRFVHQ3lzR0FRUUJrZ2dSWkFJQkJDWVRKRGRrT0RRMFlqVXlMV1ptWmprdE1URmxPQzA0WTJFegpMVFV5TlRRd01HVmhNbVF3WWpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWVnZm9iWml5L1RPUGwvcTNKVGhXClF3SG9ld0ZGWEZOaklwMTM3elI5bmxDN1lQWjBEN1VweUFKNkpSOUhHRVFxb05YQkNGeVBDV21BTEFUQTV1cWMKN254ckFyYWhHYXR0NStzVklxSkhZelpNTUZTTEFrcVZhVmpoejFXUWtIZjZrMFp1UDMvTUFGSVJtVkFlSXJJSwo2ekRDdE9ublV6ZGI2OGNrU1FCQmk3Y1NmVk9acEgyYWZheEdqUkI4T3pBVytIa2NYMXBMSUdGaDhQSmhHTWV2CjJCTDVpaVJueUtXR0ZHNDR1RkF0R0w4NXVPZjgyUFcrcnVFcENNSlVPNHkwb25nVEo5dnY4QXhYWk43MkVGT2MKR1dZRE9vbk9mdHg2MC9YbHdhNXRkS3NNZ3ZhRVhheS9sOVBERzNsUENHY1hvV2RmQVdDbHlNSi9jQVppU3FGQwp0QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDakNDQWZLZ0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREEyTVRRd01nWURWUVFEREN0dmNHVnUKYzJocFpuUXRjMlZ5ZG1salpTMXpaWEoyYVc1bkxYTnBaMjVsY2tBeE5UUTBOemMyTlRrd01CNFhEVEU0TVRJeApOREE0TXpZek1Gb1hEVEl6TVRJeE16QTRNell6TVZvd05qRTBNRElHQTFVRUF3d3JiM0JsYm5Ob2FXWjBMWE5sCmNuWnBZMlV0YzJWeWRtbHVaeTF6YVdkdVpYSkFNVFUwTkRjM05qVTVNRENDQVNJd0RRWUpLb1pJaHZjTkFRRUIKQlFBRGdnRVBBRENDQVFvQ2dnRUJBT2dPbWpjenBxcC9UMmJWdTJWUEtYN2xxQy8wT2JXY2tyVmhyS2s4WVVkcQpsbjMwRDErN2NDeTlPRGlFM0N2UStKQTFuZTloZmVOVE11bTNDYm5jWlg2WlB5YkdoS2Q1bUYxRmhXYzhIWTRBCmo0dUJBakpzR25SZTRlK0lSN21VTElZcmV2aDMrL2luUi9jZy82YTYwZGllV1NQRTc3SjdqWER4RWlwQzY2d1cKYjU1M3dON2dYendwYTdwbTdPditGQ3ZkWForYWkvS2JaWmJSbkVjd0NOREZJWS85c3YwbHc4dW4yY0JIUVdmRAo4SHRsVitTZUhxK211cW4yNGZ5U0pWQXZsUjFsMzFvUXRscVNTR08wNjdEeTNETnNUN0pINWRIKzNMUXBMMUJ2Cm91WkVwV1FSbTJPMHR3WTc5M2tsSVBTWXdJNHpUQS93RWVnS2FsV2Z6clVDQXdFQUFhTWpNQ0V3RGdZRFZSMFAKQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUd0YQpwQnZydjVVMjVrYzBLZytyRnhLOVlRNmhydVR1MDNObG8vejdCOXROb2R4Y1lRaHN5NG5zR1BnTjI5MEpoQmh4Ck9RNnB1T0hNZkxOY3N3aDR3eDFBRDB1YmpRTjc1ZUVzZVlpdWZEd0NUQjZTOExZem9mVVQzeDFITnpjd241Q2MKZXFvNTMxWFdCNVNHVHpMMHNCeEtlYkdHWlhYbHIxRFRVTDUrNmVsZ3ZTMW1uZlcyaHgxMmRXUTVvQ0EvcERlSAowdUdWVjRScCtIS0FGbUNVQWZKeFUyOVRQZitoN3dobW51bVZDMkFET2JFWFhqSXExUVl2Zy9mZ01wTTFwcHkvClpIOCtCbUdjR2FZTXcxa3FiS2hiZVIxbjNXa01HUkE4d3BtN1UrZTdud0xwbmM4TXNSVVlnTmxXVk5ROCtQUGoKdDRJWXU5VTZTQ3BTZ0F6dzhIST0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBbDI4WjdxQlV1aVpxS1ZvRDVkajdUdUpqOEwzN0hHWjRLUnhiV2dNYm4xZnFkcEx4CjljZVloaSt5cUhWZUJhcjV6MjRmSUxBbHVjY2VERUZlSExwVzFSLy9OczU0YU16ejJkbVFsL2NLVk8vdkpIV0cKdUhmd3pnajFHaFdZUGRKKzJJOUl1WDBRTXdTSVhJZkh1c0l4L0tTcGlSUjhqTGZEVGRERG5RSFpnRU5RYjBkbwpBWGdVY1V6c2YxNUJVaDBiT1BFd1EydFZibDJYTWxHblRWU0hIbGVENjIzN3JnQlgwT1dwS1VqSVBkWHVsdDlVCnRwRnh4bzFQMEh3dFhmYzJQeGJuT1F5VzR6TStla1dSdnJzWUQrUjVKcE5UWG9vSDJuK0daVGx0Qm9zUFZsSTQKUnhwMmJrSStWQ3llSXFldnV3R3ZlMWRzdGxCNUlUTEN5MVRMZndJREFRQUJBb0lCQUQ5eTBuZXovNnY3R25IMwpBRGtXbjcwZWgrYy9nbTRVMVBYTXBzM2hEWHJHK0RyME9LTFZIU2ZqNWtSRTRMOFpNdy9oUVBPT09sQkxpR0IwCkp2MThhWk5razZjZi9UMVQyandGdDFxa3JGU0lMemVrY216cC9DQW5pcUtDTjhaM1lxUlQ3SkdqUDkxUVlkMzcKR2drN0FueXJkVWsxSnpaQ2JIYzNLQzZwcnJyWlZGcCtUai9MZHhnRHZNWW92NXpmMmlkazBsVTVhTVNPbGkzYgpVKzRGTWN4Z2F6RitKSlRiSVArSWRqS2o3M3R2UVFObU00NHhYUWpnRGxiVGgyYlFzRnB3UEZaY0VVSHlRbEFLCndwZTdkNHowRk1hN1VSWExyVVRhSjE4aFJSZ3BIempjbDdMeTRCTGRNRFViVjRrcGtTY2pJL3pKaEo2WmY3TW0KK3dhcUxtRUNnWUVBd0pCbnZVUDZRR29IbzZPaHdHWlorT0pCY3l1eWNNR2sxUm1mamZocUNhZUp1cUd0Uko0Lwo3YkRMK3ZrdVRjMzFhckFXTk43VnVWOTNYeGZrS2FPNG1lcDNvRm9QV0JCSEYrREZVQXZJNWhSQmJnbmdyaXg1CmhQTDlSVzdwTlI1aE5Db1IzOTJvR2dOaUxyWGxtaldxb08xcWd0clN6UEp6VmlJalE4SzZ0ZThDZ1lFQXlWSU4KbUNyNVcrRG9lZWhXRGkxVitKRy9jMDlpQlk2a2R1bG5ucHdrZUxIWUpld1NmdVA1T3UrQkxXMVlURUc5Y0I4UgpDSFQ4STl0MFZXYXhTOS83c3ErWEpqZGxPQTRuNndYY2g1a2p0UDY1Nmt3QzJrbjRpcFRnRE44NVFQYitqbjNOCklHbTRsMFJCeUsrclFtd2dDMGdoRWN2UEw0R0FiUlIvUDg3eVUzRUNnWUJ3OGtKbTJRQm4xOGt6U2o4Tnd2cnkKNklMTE1zNHZKT1d4dUozRmYvZHlRanFlcFVZa0FVNHQ5STB3WUFld3l5VXZ0cWpQeWdSQi9xVGR1ZjJ5RHIydwpTYjV3NTJJb25TT1Y5ZGpGNHFPcmtDWHdqUXFrSHFJSVFSNGRJN2pWMTBQY2ZQQ1BCa3diTmZEWXhRZ3ZNMXNwCm1SZm9PTUY4UkpreDVFUWE4cFRoTVFLQmdGK3F2VWtOU3RmTlpjdmdpMXhMVU9wQklGQkViZGtrTXFWTFB2RlIKVThlREE2cnBwdFJqc3lDOWhZNDN3dGpoK0lxYVNMYlRHS3BWYzgvTmIvMFZYLzlHajdZYVp1QWZZZnErRzFEWQpoZTVSaWJsOEMzTDk2Ynk1Q0VzMW5IaHhwdi9CYWtPMzJYOFFjWTVUWkRlNU4vVUVmcXA5Um1SVnp0aUcvLzByCmMxNFJBb0dCQUpYaUZpejEwT3Y5WDlaSDFYVURTU2ZLY0FBYVMzYkcwdHlIYTkvTm1IQ1RCeGdlNDBkOC81emEKb3hqdzNHSlN4Mklud2hxelhBMFNJY0FSNVhuS2VrNkhPWnNNQ3dBV0UrQ1ViSFI0TzZtUTRBbTVFMTRtOG9KNwo0N1ZGZzhPUHowYjAvd2cwSDBzaWtPQkd6WnlKcjdrdzNEM1RWUUc1Z0xOVi9TL3pDTEI1Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+  kind: Secret
+  metadata:
+    annotations:
+      service.alpha.openshift.io/expiry: 2020-12-13T23:39:26Z
+      service.alpha.openshift.io/originating-service-name: router-2
+      service.alpha.openshift.io/originating-service-uid: 7d844b52-fff9-11e8-8ca3-525400ea2d0b
+    creationTimestamp: null
+    name: router-2-cert
+    ownerReferences:
+    - apiVersion: v1
+      kind: Service
+      name: router-2
+      uid: 7d844b52-fff9-11e8-8ca3-525400ea2d0b
+  type: kubernetes.io/tls
+- apiVersion: v1
+  data:
+    qdrouterd.conf: "router {\n    mode: interior\n    id: ${HOSTNAME}\n}\n\nlistener
+      {\n    host: 0.0.0.0\n    port: amqp\n    authenticatePeer: no\n    saslMechanisms:
+      ANONYMOUS\n}\n\nlistener {\n  host: 0.0.0.0\n  port: 55672\n  role: inter-router\n
+      \ authenticatePeer: no\n  saslMechanisms: ANONYMOUS\n}\n\nconnector {\n   name:
+      broker-a\n   role: route-container\n   host: broker-a-amq-headless.amq-pocs-interconnectors.svc\n
+      \  port: 61616\n   saslMechanisms: ANONYMOUS\n}\n\nconnector {\n   name: broker-b\n
+      \  role: route-container\n   host: broker-b-amq-headless.amq-pocs-interconnectors.svc\n
+      \  port: 61616\n   saslMechanisms: ANONYMOUS\n}\n\naddress {\n  prefix: demoQueue\n
+      \ waypoint: yes\n}\n\nautoLink {\n   addr: demoQueue\n   connection: broker-a\n
+      \  direction: in\n}\n\nautoLink {\n   addr: demoQueue\n   connection: broker-a\n
+      \  direction: out\n}\n\nautoLink {\n   addr: demoQueue\n   connection: broker-b\n
+      \  direction: in\n}\n\nautoLink {\n   addr: demoQueue\n   connection: broker-b\n
+      \  direction: out\n}\n\naddress {\n  prefix: dq2\n  waypoint: yes\n}    \n\nsslProfile
+      {\n   name: service_tls\n   certFile: /etc/qpid-dispatch-certs/tls.crt\n   privateKeyFile:
+      /etc/qpid-dispatch-certs/tls.key\n}\n\nlistener {\n    host: 0.0.0.0\n    port:
+      amqps\n    authenticatePeer: no\n    saslMechanisms: ANONYMOUS\n    sslProfile:
+      service_tls\n}\n\nlistener {\n    host: 0.0.0.0\n    port: 8672\n    authenticatePeer:
+      no\n    saslMechanisms: ANONYMOUS\n    sslProfile: service_tls\n    http: true\n
+      \   httpRootDir: /usr/share/qpid-dispatch/console\n}\n\naddress {\n    prefix:
+      closest\n    distribution: closest\n}\n\naddress {\n    prefix: multicast\n
+      \   distribution: multicast\n}\n\naddress {\n    prefix: unicast\n    distribution:
+      closest\n}\n\naddress {\n    prefix: exclusive\n    distribution: closest\n}\n\naddress
+      {\n    prefix: broadcast\n    distribution: multicast\n}"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-1
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-1
+- apiVersion: v1
+  data:
+    qdrouterd.conf: "router {\n    mode: interior\n    id: ${HOSTNAME}\n}\n\nlistener
+      {\n    host: 0.0.0.0\n    port: amqp\n    authenticatePeer: no\n    saslMechanisms:
+      ANONYMOUS\n}\n\nlistener {\n  host: 0.0.0.0 \n  port: 55672\n  role: inter-router\n
+      \ authenticatePeer: no\n  saslMechanisms: ANONYMOUS\n}    \n\n\nconnector {\n
+      \ name: INTER_ROUTER_A\n  host: router-1.amq-pocs-interconnectors.svc\n  port:
+      55672\n  role: inter-router\n} \n\nconnector {        \n   name: broker-c\n
+      \  role: route-container\n   host: broker-c-amq-headless.amq-pocs-interconnectors.svc
+      \  \n   port: 61616\n   saslMechanisms: ANONYMOUS\n}\n\naddress {\n  prefix:
+      dq2\n  waypoint: yes\n}\n\nautoLink {\n   addr: dq2\n   connection: broker-c\n
+      \  direction: in\n}\n\nautoLink {\n   addr: dq2\n   connection: broker-c\n   direction:
+      out\n}     \n\nsslProfile {\n   name: service_tls\n   certFile: /etc/qpid-dispatch-certs/tls.crt\n
+      \  privateKeyFile: /etc/qpid-dispatch-certs/tls.key\n}\n\nlistener {\n    host:
+      0.0.0.0\n    port: amqps\n    authenticatePeer: no\n    saslMechanisms: ANONYMOUS\n
+      \   sslProfile: service_tls\n}\n\nlistener {\n    host: 0.0.0.0\n    port: 8672\n
+      \   authenticatePeer: no\n    saslMechanisms: ANONYMOUS\n    sslProfile: service_tls\n
+      \   http: true\n    httpRootDir: /usr/share/qpid-dispatch/console\n}\n\naddress
+      {\n    prefix: closest\n    distribution: closest\n}\n\naddress {\n    prefix:
+      multicast\n    distribution: multicast\n}\n\naddress {\n    prefix: unicast\n
+      \   distribution: closest\n}\n\naddress {\n    prefix: exclusive\n    distribution:
+      closest\n}\n\naddress {\n    prefix: broadcast\n    distribution: multicast\n}"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: interconnect
+      application: router-2
+      template: amq-interconnect-1-basic
+      xpaas: 1.4.10
+    name: router-2

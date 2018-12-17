@@ -1,0 +1,361 @@
+#########################################################################################################
+#													#
+#		oc  logs -f  broker-amq-0								#
+#		172.17.0.12										#
+#		[broker, nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c]					#
+#########################################################################################################
+-XX:+UseParallelOldGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MaxMetaspaceSize=100m -XX:+ExitOnOutOfMemoryError
+Removing provided -XX:+UseParallelOldGC in favour of artemis.profile provided option
+Configuring Broker
+Broker will be clustered
+Creating Broker with args --silent --role admin --name broker --http-host broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local --java-options=-Djava.net.preferIPv4Stack=true  --user amq-demo-user --password amqDemoPassword  --allow-anonymous --data /opt/amq/data --queues demoQueue --addresses demoTopic --clustered --cluster-user=usergim --cluster-password=HjPHmCPp --host broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+Creating ActiveMQ Artemis instance at: /home/jboss/broker
+Auto tuning journal ...
+done! Your system can make 0.86 writes per millisecond, your journal-buffer-timeout will be 1164000
+You can now start the broker by executing:  
+   "/home/jboss/broker/bin/artemis" run
+Or you can run the broker in the background using:
+   "/home/jboss/broker/bin/artemis-service" start
+Setting redistribution-delay to zero.
+Configuring logging directory to be /opt/amq/data/log
+Removing hardcoded -Xms -Xmx from artemis.profile in favour of JAVA_OPTS in log above
+Copying Config files from S2I build
+'/opt/amq/conf/jgroups-ping.xml' -> '/home/jboss/broker/etc/jgroups-ping.xml'
+Configuring S2I run to start
+Custom Configuration file 'BROKER_XML' is disabled
+Custom Configuration file 'LOGGING_PROPERTIES' is disabled
+Running Broker
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+           __  __  ____    ____            _
+     /\   |  \/  |/ __ \  |  _ \          | |
+    /  \  | \  / | |  | | | |_) |_ __ ___ | | _____ _ __
+   / /\ \ | |\/| | |  | | |  _ <| '__/ _ \| |/ / _ \ '__|
+  / ____ \| |  | | |__| | | |_) | | | (_) |   <  __/ |
+ /_/    \_\_|  |_|\___\_\ |____/|_|  \___/|_|\_\___|_|
+ Red Hat JBoss AMQ 7.2.2.GA
+2018-12-06 11:54:49,437 INFO  [org.apache.activemq.artemis.integration.bootstrap] AMQ101000: Starting ActiveMQ Artemis Server
+2018-12-06 11:54:49,598 INFO  [org.apache.activemq.artemis.core.server] AMQ221000: live Message Broker is starting with configuration Broker Configuration (clustered=true,journalDirectory=/opt/amq/data/journal,bindingsDirectory=/opt/amq/data/bindings,largeMessagesDirectory=/opt/amq/data/large-messages,pagingDirectory=/opt/amq/data/paging)
+2018-12-06 11:54:49,636 INFO  [org.apache.activemq.artemis.core.server] AMQ221013: Using NIO Journal
+2018-12-06 11:54:49,719 INFO  [org.apache.activemq.artemis.core.server] AMQ221057: Global Max Size is being adjusted to 1/2 of the JVM max size (-Xmx). being defined as 517,996,544
+2018-12-06 11:54:50,186 WARNING [org.jgroups.stack.Configurator] JGRP000014: BasicTCP.use_send_queues has been deprecated: will be removed in 4.0
+2018-12-06 11:54:50,221 WARNING [org.jgroups.stack.Configurator] JGRP000014: Discovery.timeout has been deprecated: GMS.join_timeout should be used instead
+2018-12-06 11:54:50,362 INFO  [org.jgroups.protocols.openshift.DNS_PING] serviceName [ping] set; clustering enabled
+2018-12-06 11:54:53,441 INFO  [org.openshift.ping.common.Utils] 3 attempt(s) with a 1000ms sleep to execute [GetServicePort] failed. Last failure was [javax.naming.ServiceUnavailableException: DNS server failure [response code 2]]
+2018-12-06 11:54:53,441 WARNING [org.jgroups.protocols.openshift.DNS_PING] No DNS SRV record found for service [ping]
+-------------------------------------------------------------------
+GMS: address=broker-amq-0-2345, cluster=activemq_broadcast_channel, physical address=172.17.0.12:7800
+-------------------------------------------------------------------
+2018-12-06 11:54:56,565 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-server]. Adding protocol support for: CORE
+2018-12-06 11:54:56,566 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-amqp-protocol]. Adding protocol support for: AMQP
+2018-12-06 11:54:56,566 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-hornetq-protocol]. Adding protocol support for: HORNETQ
+2018-12-06 11:54:56,566 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-mqtt-protocol]. Adding protocol support for: MQTT
+2018-12-06 11:54:56,566 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-openwire-protocol]. Adding protocol support for: OPENWIRE
+2018-12-06 11:54:56,567 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-stomp-protocol]. Adding protocol support for: STOMP
+2018-12-06 11:54:56,648 INFO  [org.apache.activemq.artemis.core.server] AMQ221034: Waiting indefinitely to obtain live lock
+2018-12-06 11:54:56,648 INFO  [org.apache.activemq.artemis.core.server] AMQ221035: Live Server Obtained live lock
+2018-12-06 11:54:56,789 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address DLQ supporting [ANYCAST]
+2018-12-06 11:54:56,810 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue DLQ on address DLQ
+2018-12-06 11:54:56,907 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address ExpiryQueue supporting [ANYCAST]
+2018-12-06 11:54:56,920 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue ExpiryQueue on address ExpiryQueue
+2018-12-06 11:54:56,928 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoQueue supporting [ANYCAST]
+2018-12-06 11:54:56,932 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue demoQueue on address demoQueue
+2018-12-06 11:54:56,937 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoTopic supporting []
+2018-12-06 11:54:57,659 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61616 for protocols [CORE,MQTT,AMQP,STOMP,HORNETQ,OPENWIRE]
+2018-12-06 11:54:57,683 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5445 for protocols [HORNETQ,STOMP]
+2018-12-06 11:54:57,703 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5672 for protocols [AMQP]
+2018-12-06 11:54:57,729 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:1883 for protocols [MQTT]
+2018-12-06 11:54:57,747 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61613 for protocols [STOMP]
+2018-12-06 11:54:57,770 INFO  [org.apache.activemq.artemis.core.server] AMQ221007: Server is now live
+2018-12-06 11:54:57,770 INFO  [org.apache.activemq.artemis.core.server] AMQ221001: Apache ActiveMQ Artemis Message Broker version 2.6.3.redhat-00013 [broker, nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c] 
+2018-12-06 11:54:58,451 INFO  [io.hawt.branding.plugin.PluginContextListener] Initialized hawtio-redhat-fuse-branding plugin
+2018-12-06 11:54:58,583 INFO  [org.apache.activemq.hawtio.plugin.PluginContextListener] Initialized artemis-plugin plugin
+2018-12-06 11:54:58,733 INFO  [org.apache.qpid.dispatch.PluginContextListener] Initialized dispatch-hawtio-console plugin
+2018-12-06 11:54:59,801 INFO  [io.hawt.system.ConfigManager] Configuration will be discovered via system properties
+2018-12-06 11:54:59,805 INFO  [io.hawt.jmx.JmxTreeWatcher] Welcome to hawtio 1.4.0.redhat-630329 : http://hawt.io/ : Don't cha wish your console was hawt like me? ;-)
+2018-12-06 11:54:59,806 INFO  [io.hawt.jmx.UploadManager] Using file upload directory: /home/jboss/broker/tmp/uploads
+2018-12-06 11:54:59,820 INFO  [io.hawt.web.AuthenticationFilter] Starting hawtio authentication filter, JAAS realm: "activemq" authorized role(s): "admin" role principal classes: "org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal"
+2018-12-06 11:54:59,855 INFO  [io.hawt.web.JolokiaConfiguredAgentServlet] Jolokia overridden property: [key=policyLocation, value=file:/home/jboss/broker/etc/jolokia-access.xml]
+2018-12-06 11:54:59,875 INFO  [io.hawt.web.RBACMBeanInvoker] Using MBean [hawtio:type=security,area=jmx,rank=0,name=HawtioDummyJMXSecurity] for role based access control
+2018-12-06 11:55:00,011 INFO  [io.hawt.system.ProxyWhitelist] Initial proxy whitelist: [localhost, 127.0.0.1, 172.17.0.12, broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local]
+2018-12-06 11:55:00,487 INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161
+2018-12-06 11:55:00,488 INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console/jolokia
+2018-12-06 11:55:00,488 INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://broker-amq-0.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console
+2018-12-06 11:55:10,325 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@55695eb6 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@3fe67f8d targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@55695eb6 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@3fe67f8d targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@686349795[nodeUUID=bbf1962b-f94d-11e8-9884-0242ac11000c, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 11:55:23,837 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@266b91ad [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@28ac7b10 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@266b91ad [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@28ac7b10 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@686349795[nodeUUID=bbf1962b-f94d-11e8-9884-0242ac11000c, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 12:00:25,096 WARN  [io.netty.channel.DefaultChannelPipeline] An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.: io.netty.channel.unix.Errors$NativeIoException: syscall:read(..) failed: Connection reset by peer
+	at io.netty.channel.unix.FileDescriptor.readAddress(..)(Unknown Source) [netty-all-4.1.28.Final-redhat-00001.jar:4.1.28.Final-redhat-00001]
+
+
+
+
+2018-12-06 12:03:12,527 INFO  [io.hawt.web.keycloak.KeycloakServlet] Keycloak integration is disabled
+2018-12-06 12:03:19,946 INFO  [io.hawt.web.LoginServlet] hawtio login is using 1800 sec. HttpSession timeout
+2018-12-06 12:33:25,349 INFO  [io.hawt.web.SessionExpiryFilter] Expiring session due to inactivity
+
+
+
+
+
+
+
+
+#########################################################################################################
+#													#
+#		oc  logs -f  broker-amq-1								#
+#		172.17.0.13										#
+#		[broker, nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d] 					#
+#########################################################################################################
+-XX:+UseParallelOldGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MaxMetaspaceSize=100m -XX:+ExitOnOutOfMemoryError
+Removing provided -XX:+UseParallelOldGC in favour of artemis.profile provided option
+Configuring Broker
+Broker will be clustered
+Creating Broker with args --silent --role admin --name broker --http-host broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local --java-options=-Djava.net.preferIPv4Stack=true  --user amq-demo-user --password amqDemoPassword  --allow-anonymous --data /opt/amq/data --queues demoQueue --addresses demoTopic --clustered --cluster-user=usergim --cluster-password=HjPHmCPp --host broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+Creating ActiveMQ Artemis instance at: /home/jboss/broker
+Auto tuning journal ...
+done! Your system can make 0.69 writes per millisecond, your journal-buffer-timeout will be 1452000
+You can now start the broker by executing:  
+   "/home/jboss/broker/bin/artemis" run
+Or you can run the broker in the background using:
+   "/home/jboss/broker/bin/artemis-service" start
+Setting redistribution-delay to zero.
+Configuring logging directory to be /opt/amq/data/log
+Removing hardcoded -Xms -Xmx from artemis.profile in favour of JAVA_OPTS in log above
+Copying Config files from S2I build
+'/opt/amq/conf/jgroups-ping.xml' -> '/home/jboss/broker/etc/jgroups-ping.xml'
+Configuring S2I run to start
+Custom Configuration file 'BROKER_XML' is disabled
+Custom Configuration file 'LOGGING_PROPERTIES' is disabled
+Running Broker
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+           __  __  ____    ____            _
+     /\   |  \/  |/ __ \  |  _ \          | |
+    /  \  | \  / | |  | | | |_) |_ __ ___ | | _____ _ __
+   / /\ \ | |\/| | |  | | |  _ <| '__/ _ \| |/ / _ \ '__|
+  / ____ \| |  | | |__| | | |_) | | | (_) |   <  __/ |
+ /_/    \_\_|  |_|\___\_\ |____/|_|  \___/|_|\_\___|_|
+ Red Hat JBoss AMQ 7.2.2.GA
+2018-12-06 11:55:04,823 INFO  [org.apache.activemq.artemis.integration.bootstrap] AMQ101000: Starting ActiveMQ Artemis Server
+2018-12-06 11:55:04,905 INFO  [org.apache.activemq.artemis.core.server] AMQ221000: live Message Broker is starting with configuration Broker Configuration (clustered=true,journalDirectory=/opt/amq/data/journal,bindingsDirectory=/opt/amq/data/bindings,largeMessagesDirectory=/opt/amq/data/large-messages,pagingDirectory=/opt/amq/data/paging)
+2018-12-06 11:55:04,930 INFO  [org.apache.activemq.artemis.core.server] AMQ221013: Using NIO Journal
+2018-12-06 11:55:04,964 INFO  [org.apache.activemq.artemis.core.server] AMQ221057: Global Max Size is being adjusted to 1/2 of the JVM max size (-Xmx). being defined as 517,996,544
+2018-12-06 11:55:05,161 WARNING [org.jgroups.stack.Configurator] JGRP000014: BasicTCP.use_send_queues has been deprecated: will be removed in 4.0
+2018-12-06 11:55:05,171 WARNING [org.jgroups.stack.Configurator] JGRP000014: Discovery.timeout has been deprecated: GMS.join_timeout should be used instead
+2018-12-06 11:55:05,231 INFO  [org.jgroups.protocols.openshift.DNS_PING] serviceName [ping] set; clustering enabled
+2018-12-06 11:55:08,250 INFO  [org.openshift.ping.common.Utils] 3 attempt(s) with a 1000ms sleep to execute [GetServicePort] failed. Last failure was [javax.naming.ServiceUnavailableException: DNS server failure [response code 2]]
+2018-12-06 11:55:08,250 WARNING [org.jgroups.protocols.openshift.DNS_PING] No DNS SRV record found for service [ping]
+-------------------------------------------------------------------
+GMS: address=broker-amq-1-21503, cluster=activemq_broadcast_channel, physical address=172.17.0.13:7800
+-------------------------------------------------------------------
+2018-12-06 11:55:08,531 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-server]. Adding protocol support for: CORE
+2018-12-06 11:55:08,531 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-amqp-protocol]. Adding protocol support for: AMQP
+2018-12-06 11:55:08,540 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-hornetq-protocol]. Adding protocol support for: HORNETQ
+2018-12-06 11:55:08,540 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-mqtt-protocol]. Adding protocol support for: MQTT
+2018-12-06 11:55:08,541 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-openwire-protocol]. Adding protocol support for: OPENWIRE
+2018-12-06 11:55:08,541 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-stomp-protocol]. Adding protocol support for: STOMP
+2018-12-06 11:55:08,648 INFO  [org.apache.activemq.artemis.core.server] AMQ221034: Waiting indefinitely to obtain live lock
+2018-12-06 11:55:08,648 INFO  [org.apache.activemq.artemis.core.server] AMQ221035: Live Server Obtained live lock
+2018-12-06 11:55:08,828 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address DLQ supporting [ANYCAST]
+2018-12-06 11:55:08,843 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue DLQ on address DLQ
+2018-12-06 11:55:08,902 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address ExpiryQueue supporting [ANYCAST]
+2018-12-06 11:55:08,906 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue ExpiryQueue on address ExpiryQueue
+2018-12-06 11:55:08,911 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoQueue supporting [ANYCAST]
+2018-12-06 11:55:08,915 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue demoQueue on address demoQueue
+2018-12-06 11:55:08,920 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoTopic supporting []
+2018-12-06 11:55:09,381 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61616 for protocols [CORE,MQTT,AMQP,STOMP,HORNETQ,OPENWIRE]
+2018-12-06 11:55:09,435 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5445 for protocols [HORNETQ,STOMP]
+2018-12-06 11:55:09,495 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5672 for protocols [AMQP]
+2018-12-06 11:55:09,522 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:1883 for protocols [MQTT]
+2018-12-06 11:55:09,630 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61613 for protocols [STOMP]
+2018-12-06 11:55:09,636 INFO  [org.apache.activemq.artemis.core.server] AMQ221007: Server is now live
+2018-12-06 11:55:09,637 INFO  [org.apache.activemq.artemis.core.server] AMQ221001: Apache ActiveMQ Artemis Message Broker version 2.6.3.redhat-00013 [broker, nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d] 
+2018-12-06 11:55:10,575 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@767dcc94 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@3cac14c7 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@767dcc94 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@3cac14c7 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1376151044[nodeUUID=c5129fcc-f94d-11e8-b988-0242ac11000d, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 11:55:10,719 INFO  [io.hawt.branding.plugin.PluginContextListener] Initialized hawtio-redhat-fuse-branding plugin
+2018-12-06 11:55:10,775 INFO  [org.apache.activemq.hawtio.plugin.PluginContextListener] Initialized artemis-plugin plugin
+2018-12-06 11:55:10,833 INFO  [org.apache.qpid.dispatch.PluginContextListener] Initialized dispatch-hawtio-console plugin
+2018-12-06 11:55:11,865 INFO  [io.hawt.system.ConfigManager] Configuration will be discovered via system properties
+2018-12-06 11:55:11,867 INFO  [io.hawt.jmx.JmxTreeWatcher] Welcome to hawtio 1.4.0.redhat-630329 : http://hawt.io/ : Don't cha wish your console was hawt like me? ;-)
+2018-12-06 11:55:11,877 INFO  [io.hawt.jmx.UploadManager] Using file upload directory: /home/jboss/broker/tmp/uploads
+2018-12-06 11:55:11,897 INFO  [io.hawt.web.AuthenticationFilter] Starting hawtio authentication filter, JAAS realm: "activemq" authorized role(s): "admin" role principal classes: "org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal"
+2018-12-06 11:55:11,928 INFO  [io.hawt.web.JolokiaConfiguredAgentServlet] Jolokia overridden property: [key=policyLocation, value=file:/home/jboss/broker/etc/jolokia-access.xml]
+2018-12-06 11:55:11,961 INFO  [io.hawt.web.RBACMBeanInvoker] Using MBean [hawtio:type=security,area=jmx,rank=0,name=HawtioDummyJMXSecurity] for role based access control
+2018-12-06 11:55:12,161 INFO  [io.hawt.system.ProxyWhitelist] Initial proxy whitelist: [localhost, 127.0.0.1, 172.17.0.13, broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local]
+2018-12-06 11:55:12,665 INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161
+2018-12-06 11:55:12,670 INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console/jolokia
+2018-12-06 11:55:12,670 INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://broker-amq-1.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console
+2018-12-06 11:55:23,836 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@6599eb7d [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@167b334a targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@6599eb7d [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@167b334a targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1376151044[nodeUUID=c5129fcc-f94d-11e8-b988-0242ac11000d, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 12:01:08,167 WARN  [io.netty.channel.DefaultChannelPipeline] An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.: io.netty.channel.unix.Errors$NativeIoException: syscall:read(..) failed: Connection reset by peer
+	at io.netty.channel.unix.FileDescriptor.readAddress(..)(Unknown Source) [netty-all-4.1.28.Final-redhat-00001.jar:4.1.28.Final-redhat-00001]
+
+
+
+
+
+
+
+
+#########################################################################################################
+#													#
+#		oc  logs -f  broker-amq-2								#
+#		172.17.0.14										#
+#		[broker, nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e] 					#
+#########################################################################################################
+-XX:+UseParallelOldGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MaxMetaspaceSize=100m -XX:+ExitOnOutOfMemoryError
+Removing provided -XX:+UseParallelOldGC in favour of artemis.profile provided option
+Configuring Broker
+Broker will be clustered
+Creating Broker with args --silent --role admin --name broker --http-host broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local --java-options=-Djava.net.preferIPv4Stack=true  --user amq-demo-user --password amqDemoPassword  --allow-anonymous --data /opt/amq/data --queues demoQueue --addresses demoTopic --clustered --cluster-user=usergim --cluster-password=HjPHmCPp --host broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+Creating ActiveMQ Artemis instance at: /home/jboss/broker
+Auto tuning journal ...
+done! Your system can make 0.61 writes per millisecond, your journal-buffer-timeout will be 1628000
+You can now start the broker by executing:  
+   "/home/jboss/broker/bin/artemis" run
+Or you can run the broker in the background using:
+   "/home/jboss/broker/bin/artemis-service" start
+Setting redistribution-delay to zero.
+Configuring logging directory to be /opt/amq/data/log
+Removing hardcoded -Xms -Xmx from artemis.profile in favour of JAVA_OPTS in log above
+Copying Config files from S2I build
+'/opt/amq/conf/jgroups-ping.xml' -> '/home/jboss/broker/etc/jgroups-ping.xml'
+Configuring S2I run to start
+Custom Configuration file 'BROKER_XML' is disabled
+Custom Configuration file 'LOGGING_PROPERTIES' is disabled
+Running Broker
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+           __  __  ____    ____            _
+     /\   |  \/  |/ __ \  |  _ \          | |
+    /  \  | \  / | |  | | | |_) |_ __ ___ | | _____ _ __
+   / /\ \ | |\/| | |  | | |  _ <| '__/ _ \| |/ / _ \ '__|
+  / ____ \| |  | | |__| | | |_) | | | (_) |   <  __/ |
+ /_/    \_\_|  |_|\___\_\ |____/|_|  \___/|_|\_\___|_|
+ Red Hat JBoss AMQ 7.2.2.GA
+2018-12-06 11:55:17,404 INFO  [org.apache.activemq.artemis.integration.bootstrap] AMQ101000: Starting ActiveMQ Artemis Server
+2018-12-06 11:55:17,488 INFO  [org.apache.activemq.artemis.core.server] AMQ221000: live Message Broker is starting with configuration Broker Configuration (clustered=true,journalDirectory=/opt/amq/data/journal,bindingsDirectory=/opt/amq/data/bindings,largeMessagesDirectory=/opt/amq/data/large-messages,pagingDirectory=/opt/amq/data/paging)
+2018-12-06 11:55:17,514 INFO  [org.apache.activemq.artemis.core.server] AMQ221013: Using NIO Journal
+2018-12-06 11:55:17,550 INFO  [org.apache.activemq.artemis.core.server] AMQ221057: Global Max Size is being adjusted to 1/2 of the JVM max size (-Xmx). being defined as 517,996,544
+2018-12-06 11:55:17,713 WARNING [org.jgroups.stack.Configurator] JGRP000014: BasicTCP.use_send_queues has been deprecated: will be removed in 4.0
+2018-12-06 11:55:17,723 WARNING [org.jgroups.stack.Configurator] JGRP000014: Discovery.timeout has been deprecated: GMS.join_timeout should be used instead
+2018-12-06 11:55:17,897 INFO  [org.jgroups.protocols.openshift.DNS_PING] serviceName [ping] set; clustering enabled
+2018-12-06 11:55:20,922 INFO  [org.openshift.ping.common.Utils] 3 attempt(s) with a 1000ms sleep to execute [GetServicePort] failed. Last failure was [javax.naming.ServiceUnavailableException: DNS server failure [response code 2]]
+2018-12-06 11:55:20,923 WARNING [org.jgroups.protocols.openshift.DNS_PING] No DNS SRV record found for service [ping]
+-------------------------------------------------------------------
+GMS: address=broker-amq-2-6096, cluster=activemq_broadcast_channel, physical address=172.17.0.14:7800
+-------------------------------------------------------------------
+2018-12-06 11:55:21,119 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-server]. Adding protocol support for: CORE
+2018-12-06 11:55:21,120 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-amqp-protocol]. Adding protocol support for: AMQP
+2018-12-06 11:55:21,120 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-hornetq-protocol]. Adding protocol support for: HORNETQ
+2018-12-06 11:55:21,120 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-mqtt-protocol]. Adding protocol support for: MQTT
+2018-12-06 11:55:21,122 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-openwire-protocol]. Adding protocol support for: OPENWIRE
+2018-12-06 11:55:21,122 INFO  [org.apache.activemq.artemis.core.server] AMQ221043: Protocol module found: [artemis-stomp-protocol]. Adding protocol support for: STOMP
+2018-12-06 11:55:21,189 INFO  [org.apache.activemq.artemis.core.server] AMQ221034: Waiting indefinitely to obtain live lock
+2018-12-06 11:55:21,189 INFO  [org.apache.activemq.artemis.core.server] AMQ221035: Live Server Obtained live lock
+2018-12-06 11:55:21,466 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address DLQ supporting [ANYCAST]
+2018-12-06 11:55:21,514 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue DLQ on address DLQ
+2018-12-06 11:55:21,600 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address ExpiryQueue supporting [ANYCAST]
+2018-12-06 11:55:21,638 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue ExpiryQueue on address ExpiryQueue
+2018-12-06 11:55:21,648 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoQueue supporting [ANYCAST]
+2018-12-06 11:55:21,663 INFO  [org.apache.activemq.artemis.core.server] AMQ221003: Deploying ANYCAST queue demoQueue on address demoQueue
+2018-12-06 11:55:21,668 INFO  [org.apache.activemq.artemis.core.server] AMQ221080: Deploying address demoTopic supporting []
+2018-12-06 11:55:21,968 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61616 for protocols [CORE,MQTT,AMQP,STOMP,HORNETQ,OPENWIRE]
+2018-12-06 11:55:21,979 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5445 for protocols [HORNETQ,STOMP]
+2018-12-06 11:55:21,989 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:5672 for protocols [AMQP]
+2018-12-06 11:55:22,014 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:1883 for protocols [MQTT]
+2018-12-06 11:55:22,040 INFO  [org.apache.activemq.artemis.core.server] AMQ221020: Started EPOLL Acceptor at broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:61613 for protocols [STOMP]
+2018-12-06 11:55:22,048 INFO  [org.apache.activemq.artemis.core.server] AMQ221007: Server is now live
+2018-12-06 11:55:22,048 INFO  [org.apache.activemq.artemis.core.server] AMQ221001: Apache ActiveMQ Artemis Message Broker version 2.6.3.redhat-00013 [broker, nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e] 
+2018-12-06 11:55:22,321 INFO  [io.hawt.branding.plugin.PluginContextListener] Initialized hawtio-redhat-fuse-branding plugin
+2018-12-06 11:55:22,430 INFO  [org.apache.activemq.hawtio.plugin.PluginContextListener] Initialized artemis-plugin plugin
+2018-12-06 11:55:22,526 INFO  [org.apache.qpid.dispatch.PluginContextListener] Initialized dispatch-hawtio-console plugin
+2018-12-06 11:55:23,479 INFO  [io.hawt.system.ConfigManager] Configuration will be discovered via system properties
+2018-12-06 11:55:23,483 INFO  [io.hawt.jmx.JmxTreeWatcher] Welcome to hawtio 1.4.0.redhat-630329 : http://hawt.io/ : Don't cha wish your console was hawt like me? ;-)
+2018-12-06 11:55:23,489 INFO  [io.hawt.jmx.UploadManager] Using file upload directory: /home/jboss/broker/tmp/uploads
+2018-12-06 11:55:23,567 INFO  [io.hawt.web.AuthenticationFilter] Starting hawtio authentication filter, JAAS realm: "activemq" authorized role(s): "admin" role principal classes: "org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal"
+2018-12-06 11:55:23,674 INFO  [io.hawt.web.JolokiaConfiguredAgentServlet] Jolokia overridden property: [key=policyLocation, value=file:/home/jboss/broker/etc/jolokia-access.xml]
+2018-12-06 11:55:23,789 INFO  [io.hawt.web.RBACMBeanInvoker] Using MBean [hawtio:type=security,area=jmx,rank=0,name=HawtioDummyJMXSecurity] for role based access control
+2018-12-06 11:55:23,798 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@40518c67 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@3cc37165 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@40518c67 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@3cc37165 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1404932042[nodeUUID=cc92a277-f94d-11e8-ae14-0242ac11000e, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 11:55:23,807 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@322d5e83 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@407daf8e targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@322d5e83 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@407daf8e targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1404932042[nodeUUID=cc92a277-f94d-11e8-ae14-0242ac11000e, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+2018-12-06 11:55:24,061 INFO  [io.hawt.system.ProxyWhitelist] Initial proxy whitelist: [localhost, 127.0.0.1, 172.17.0.14, broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local]
+2018-12-06 11:55:24,382 INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161
+2018-12-06 11:55:24,382 INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console/jolokia
+2018-12-06 11:55:24,385 INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://broker-amq-2.broker-amq-headless.amq-pocs-non-ssl.svc.cluster.local:8161/console
+2018-12-06 12:47:53,679 INFO  [io.hawt.web.keycloak.KeycloakServlet] Keycloak integration is disabled
+2018-12-06 12:48:16,112 INFO  [io.hawt.web.LoginServlet] hawtio login is using 1800 sec. HttpSession timeout
+
+
+########################################
+	BRIDGES in POD-1
+########################################
+=============================================================================================================================
+[broker-amq-0, POD-1, nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c]
+
+BRIDGE ClusterConnectionBridge@55695eb6	--> 	name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d	
+
+broker-amq-0 with broker-amq-1	nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d
+=============================================================================================================================
+2018-12-06 11:55:10,325 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@55695eb6 [
+name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, 
+queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, 
+postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@3fe67f8d targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@55695eb6 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@3fe67f8d targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@686349795[nodeUUID=bbf1962b-f94d-11e8-9884-0242ac11000c, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+
+=============================================================================================================================
+[broker-amq-0, POD-1, nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c]
+
+BRIDGE ClusterConnectionBridge@55695eb6	-->	name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e	
+
+broker-amq-0 with broker-amq-2	nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e
+=============================================================================================================================
+
+2018-12-06 11:55:23,837 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@266b91ad [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@28ac7b10 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@266b91ad [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c], temp=false]@28ac7b10 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@686349795[nodeUUID=bbf1962b-f94d-11e8-9884-0242ac11000c, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=bbf1962b-f94d-11e8-9884-0242ac11000c])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+
+
+########################################
+	BRIDGES in POD-2
+########################################
+=============================================================================================================================
+[broker-amq-1, POD-2, nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d]
+
+BRIDGE ClusterConnectionBridge@767dcc94	--> 	name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c	
+
+broker-amq-1 with broker-amq-0	nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c
+=============================================================================================================================
+2018-12-06 11:55:10,575 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@767dcc94 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@3cac14c7 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@767dcc94 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@3cac14c7 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1376151044[nodeUUID=c5129fcc-f94d-11e8-b988-0242ac11000d, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+
+=============================================================================================================================
+[broker-amq-1, POD-2, nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d]
+
+BRIDGE ClusterConnectionBridge@6599eb7d	--> 	name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e0c	
+
+broker-amq-1 with broker-amq-2	nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e0c
+=============================================================================================================================
+2018-12-06 11:55:23,836 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@6599eb7d [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@167b334a targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@6599eb7d [name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.cc92a277-f94d-11e8-ae14-0242ac11000e, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d], temp=false]@167b334a targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1376151044[nodeUUID=c5129fcc-f94d-11e8-b988-0242ac11000d, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=c5129fcc-f94d-11e8-b988-0242ac11000d])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+
+########################################
+	BRIDGES in POD-3
+########################################
+=============================================================================================================================
+[broker-amq-1, POD-2, nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e]
+
+BRIDGE ClusterConnectionBridge@40518c67	--> 	name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c	
+
+broker-amq-2 with broker-amq-0	nodeID=bbf1962b-f94d-11e8-9884-0242ac11000c
+=============================================================================================================================
+2018-12-06 11:55:23,798 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@40518c67 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@3cc37165 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@40518c67 [name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.bbf1962b-f94d-11e8-9884-0242ac11000c, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@3cc37165 targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1404932042[nodeUUID=cc92a277-f94d-11e8-ae14-0242ac11000e, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-0-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+=============================================================================================================================
+[broker-amq-1, POD-2, nodeID=cc92a277-f94d-11e8-ae14-0242ac11000e]
+
+BRIDGE ClusterConnectionBridge@322d5e83	--> 	name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d	
+
+broker-amq-2 with broker-amq-1	nodeID=c5129fcc-f94d-11e8-b988-0242ac11000d
+=============================================================================================================================
+
+2018-12-06 11:55:23,807 INFO  [org.apache.activemq.artemis.core.server] AMQ221027: Bridge ClusterConnectionBridge@322d5e83 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@407daf8e targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@322d5e83 [name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, queue=QueueImpl[name=$.artemis.internal.sf.my-cluster.c5129fcc-f94d-11e8-b988-0242ac11000d, postOffice=PostOfficeImpl [server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e], temp=false]@407daf8e targetConnector=ServerLocatorImpl [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1404932042[nodeUUID=cc92a277-f94d-11e8-ae14-0242ac11000e, connector=TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-2-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local, address=, server=ActiveMQServerImpl::serverUUID=cc92a277-f94d-11e8-ae14-0242ac11000e])) [initialConnectors=[TransportConfiguration(name=artemis, factory=org-apache-activemq-artemis-core-remoting-impl-netty-NettyConnectorFactory) ?port=61616&host=broker-amq-1-broker-amq-headless-amq-pocs-non-ssl-svc-cluster-local], discoveryGroupConfiguration=null]] is connected
+
+
+

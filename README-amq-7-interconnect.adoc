@@ -9,6 +9,7 @@ Resources:
 * link:https://www.youtube.com/watch?v=nVf5e97rvgQ[AMQ 7 and Microservices: Messaging for Everything] (Video)
 * AMQ 7 Interconnectors:  link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#theory_of_operation[Theory of Operations] (Using Interconnect Guide)
 
+
 == STAGE 1:  Install all necessary components (templates, images/streams) and preps
 
 * Install amq-interconnect images
@@ -184,6 +185,28 @@ Setting up 3 brokers which are Stateful Sets with single instance
 	
 
 
+== Connecting clients to a router mesh
+
+* Procedure: To connect a client to the router mesh, use the following connection URL syntax:
+* *<scheme>://[<username>@]<host>[:<port>]*
+* *<scheme>*	For unencrypted TCP, use amqp. If you deployed the router mesh with SSL/TLS authentication, use amqps. 
+* *<username>*    If you deployed the router mesh with SASL user name/password authentication, you must provide the client’s user name. 
+* *<host>*        If the client is in the same OpenShift cluster as the router mesh, use the OpenShift service IP address. Otherwise, use the host name of the route. 
+* *<port>*        If you are connecting to a route, you must specify the port. Use 80 for unsecured connections, and 443 for secured connections. 
+
+    The following table shows some example connection URLs.
+    URL	Description    amqp://192.0.2.1
+    	
+
+    The client and router mesh are both in the same OpenShift cluster, so the service IP address is used for the connection URL.
+    amqps://amq-interconnect-myproject.192.0.2.1.nip.io:443   	
+
+    The client is outside of OpenShift, so the route host name is used for the connection URL. In this case, SSL/TLS authentication is implemented, which requires the amqps scheme and port 443. (or NodePort service)
+
+
+
+
+
 == STAGE 3:  AMQ Interonnect Setup
 
 
@@ -216,7 +239,7 @@ To deploy and test this topology, you should have
 
 * Create *router-1*
 
-	oc new-app  --template=amq-interconnect-1-basic -pAPPLICATION_NAME=router-1 -l app=interconnect -n amq-pocs-non-ssl
+	oc new-app  --template=amq-interconnect-1-basic -pAPPLICATION_NAME=router-1 -l app=interconnect -n amq-pocs-interconnectors
 
 * Create OCP Route to Interconnect *router-1* - WEB Console OCP Route (8672)
 
@@ -261,7 +284,7 @@ To deploy and test this topology, you should have
 	  sessionAffinity: None
 	  type: NodePort' | oc create -f - -n amq-pocs-interconnectors
 
-=== Result - Initial Installation 
+==== Result - Initial Installation 
 
 The outcome will be 3 routes which can be used to access the content of the *3 brokers* and the interconnect *router-1*
 
@@ -398,7 +421,7 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
 ---
 
 
-==== Test Interconnect Scenario 2
+=== Test Interconnect Scenario 2
 
 *Aim: Showcase no changes to end-clients whilst topology changes behind the interconnect*
 
@@ -623,212 +646,173 @@ The topology in *router-1* web-console will now be showing the router and its co
 
 
 
-
-
-
-
 === Test Interconnect Scenario 4
 
-Now create a mesh with autoLink to the addresses and adding a new router-2 and maybe router-3 so that not only one router contains links to brokers
+*Aim: Showcase redundant interconnect topology with multiple routers not containing all links*
 
-https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#path_redundancy_and_temporal_decoupling
-
-
+Now create a mesh with autoLink (ie. links can exist before queue objects exist on the brokers and can autoLink when the objects are created) to the addresses and adding a new router-2 and maybe router-3 so that not only one router contains links to brokers
 
 
-* Interconnect via *router-1* is going to be used for direct access to *broker-a* and *broker-b* addresses
+* Update *router-1* to ensure there is a waypoint 
 
-** No Configuraton on interconnect *router-1* to give accss to address *dq
+    address {
+        prefix: dq2
+        waypoint: yes
+    }
+** *Note*: Although the waypoint is required in order to find its way to *router-2* configuration of the *dq2* link it canbe covered with a generic *_address format prefix_* so it is not necessary to define for its new address name
 
+* Create *router-2*
 
-	connector {
-            name: broker-a
-            role: route-container
-            host: broker-a-amq-headless.amq-interconnectors.svc 
-            port: 61616
-            saslMechanisms: ANONYMOUS
-    	}
+	oc new-app  --template=amq-interconnect-1-basic -pAPPLICATION_NAME=router-2 -l app=interconnect -n amq-pocs-interconnectors
 
-    	linkRoute {
-            prefix: dq2
-            connection: broker-b
-            direction: in
-    	}
-
-    	linkRoute {
-            prefix: dq2
-            connection: broker-b
-            direction: out
-    	}
+* Configure *inter-router* connectivity
 
 
+** ConfigMap *router-1*
 
-==== Test Interconnect Scenario 1
+    listener {
+      host: router-1.amq-pocs-interconnectors.svc
+      port: 55672
+      role: inter-router
+      authenticatePeer: no
+      saslMechanisms: ANONYMOUS
+    }
+    
+    connector {
+      name: INTER_ROUTER_B
+      addr: router-2.amq-pocs-interconnectors.svc
+      port: 55672
+      role: inter-router
+    }    
+
+** ConfigMap *router-2*
+
+    listener {
+      host: router-2.amq-pocs-interconnectors.svc
+      port: 55672
+      role: inter-router
+      authenticatePeer: no
+      saslMechanisms: ANONYMOUS
+    }
 
 
+* Create OCP Route to Interconnect *router-2* - WEB Console OCP Route (8672)
 
-=== Install Interconnect Router-2
-
-Configured Later (Scenario Interconnect with aggregators)
-
-=== Install Interconnect Router-3
-
-Configured Later (Scenario Interconnect with aggregators)
-
-
-
-
-
-
-	
-==== Create Router NO-AUTH TCP OCP Route (5672)
-	apiVersion: route.openshift.io/v1
+	echo 'apiVersion: route.openshift.io/v1
 	kind: Route
 	metadata:
 	  labels:
-	    app: amq-interconnect-1-basic
-	    application: amq-interconnect-basic-1
-	    template: amq-interconnect-1-basic
-	  name: router-1-tcp-noauth
-	  namespace: amq-online
+	    application: router-2
+	    app: interconnect 
+	  name: router-2-web-console
 	spec:
-	  host: router-1-tcp-noauth-amq-online.192.168.42.196.nip.io
+	  host: router-2-web-console-amq-pocs-interconnectors.192.168.42.67.nip.io
 	  port:
-	    targetPort: 5672
+	    targetPort: 8672
 	  to:
 	    kind: Service
-	    name: amq-interconnect-basic-1
+	    name: router-2
 	    weight: 100
 	  wildcardPolicy: None
+	status:
+	  loadBalancer: {}' | oc create -f - -n amq-pocs-interconnectors
 
 
-
-	
-
-=== Connecting clients to a router mesh
-
-Procedure: To connect a client to the router mesh, use the following connection URL syntax:
-
-    <scheme>://[<username>@]<host>[:<port>]
-
-    <scheme>
-        For unencrypted TCP, use amqp. If you deployed the router mesh with SSL/TLS authentication, use amqps. 
-    <username>
-        If you deployed the router mesh with SASL user name/password authentication, you must provide the client’s user name. 
-    <host>
-        If the client is in the same OpenShift cluster as the router mesh, use the OpenShift service IP address. Otherwise, use the host name of the route. 
-    <port>
-        If you are connecting to a route, you must specify the port. Use 80 for unsecured connections, and 443 for secured connections. 
-
-    The following table shows some example connection URLs.
-    URL	Description
-
-    amqp://192.0.2.1
-    	
-
-    The client and router mesh are both in the same OpenShift cluster, so the service IP address is used for the connection URL.
-
-    amqps://amq-interconnect-myproject.192.0.2.1.nip.io:443
-    	
-
-    The client is outside of OpenShift, so the route host name is used for the connection URL. In this case, SSL/TLS authentication is implemented, which requires the amqps scheme and port 443. 
+* Not Exposing Interconnect *router-2* AMQP Port over service  (8672) only *router-1* will still be accessible by the client with the difference that *dq2* address links will be moved to *router-2* but shouldn't affect the client
 
 
-== Connecting to a message broker (within OCP)
+==== Result - Redundant Interconnect Topology
 
-UPDATE:  amq-interconnect-basic-1
+* The outcome will be 2 routes which can be used to access the content of the *3 brokers* and the interconnect *router-1*
+* The topology created in the mesh will be image:pics/amq-interconnect-Routes-interconnect-1-brokers-3-consoles.png["Routes for Consoles",height=240] 
+* The console consolidates queues from all connected routers without need for multiple consoles, as seen here: image:pics/Router-1-Console-Exposing-Router-Toology.png["Routers",height=240] 
+* The *broker-c* console showing messages delivered to *dq2* accessible only via *router-2* when client is connecting to *router-1* image:pics/Broker-C-dq2-ConsoleView.png["dq2 messages",height=240]
+* Routers console showing the messages being delviered to address *dq2* via the POD for *router-2* image:pics/Routers-Delivery-View.png["dq2 messages",height=240]
 
-	connector {
-	    name: broker
-	    role: route-container
-	    host: broker-amq-headless.amq-online.svc
-	    port: 61616
-	    saslMechanisms: ANONYMOUS
-	}
+* The topology in *router-1* web-console will be showing only the router and its console connected image:pics/TOPOLOGY-4.png["Topology Redundant",height=240] 
 
+Facility *qdstat* shows on the *router-2* POD *in connections* from the console and then a *bi-directional* connection to *router-1* as well as to *broker-c*
 
-	connector {
-	    name: broker-a
-	    role: route-container
-	    host: broker-a-amq-headless.amq-online.svc
-	    port: 61616
-	    saslMechanisms: ANONYMOUS
-	}
-
-	connector {
-	    name: broker-b
-	    role: route-container
-	    host: broker-b-amq-headless.amq-online.svc
-	    port: 61616
-	    saslMechanisms: ANONYMOUS
-	}
-
-redploy Interconnector
-
-	2018-12-07 14:04:10.949379 +0000 CONN_MGR (info) Configured Connector: broker-amq-headless.amq-online.svc:61616 proto=any, role=route-container
-
-	oc exec amq-interconnect-basic-1-2-h972z -it -- qdstat -c
+	$ oc exec router-2-9-v2q62  -it -- qdstat -c
 	Connections
-  	id  host                                      container                             role             dir  security     authentication  tenant
-  	===============================================================================================================================================
-  	1   broker-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
-  	2   127.0.0.1:33278                           11ef781d-7e5b-4464-875d-442b2c2a98c9  normal           in   no-security  no-auth    
+  	id  host                                                      container                             role             dir  security     authentication  tenant
+  	===============================================================================================================================================================
+  	13  broker-c-amq-headless.amq-pocs-interconnectors.svc:61616  broker-c                              route-container  out  no-security  anonymous-user  
+  	33  router-1.amq-pocs-interconnectors.svc:55672               router-1-29-lhxwj                     inter-router     out  no-security  anonymous-user  
+ 	34  127.0.0.1:43130                         
 
 
-=== Monitoring the router mesh using the web console
-Docs: https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#monitoring-router-mesh-using-web-console-managing
+Facility *qdstat* shows on the *router-1* POD *in connections* from the console and then a *bi-directional* connection to *router-2* as well as to *broker-a* and *broker-b*
 
-
-	$ oc exec amq-interconnect-basic-1-5-cjnct -it -- qdstat -c
+	$ oc exec router-1-29-lhxwj  -it -- qdstat -c
 	Connections
-	  id  host                                        container                             role             dir  security     authentication  tenant
-	  =================================================================================================================================================
-	  3   broker-amq-headless.amq-online.svc:61616    broker                                route-container  out  no-security  anonymous-user  
-	  1   broker-b-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
-	  2   broker-a-amq-headless.amq-online.svc:61616  broker                                route-container  out  no-security  anonymous-user  
-	  4   172.17.0.1                                  417b6d34-8dfa-f74c-b186-964451d361a5  normal           in   no-security  no-auth         
-	  5   127.0.0.1:46548                             1a30623d-e6f6-474a-a52b-02e67dbb20ad  normal           in   no-security  no-auth
+	  id  host                                                      container                             role             dir  security     authentication  tenant
+	  ===============================================================================================================================================================
+	  1   broker-b-amq-headless.amq-pocs-interconnectors.svc:61616  broker-b                              route-container  out  no-security  anonymous-user  
+	  2   broker-a-amq-headless.amq-pocs-interconnectors.svc:61616  broker-a                              route-container  out  no-security  anonymous-user  
+	  4   172.17.0.10:38284                                         router-2-9-v2q62                      inter-router     in   no-security  anonymous-user  
+	  6   172.17.0.1                                                26f2ee86-ca54-224d-93ca-322e32819f3a  normal           in   no-security  no-auth         
+	  8   127.0.0.1:43006                                           44bfc191-9802-4268-864e-0d87c8c71a9c  normal           in   no-security  no-auth         
 
-
-== Scaling the router mesh
-
-
-You can scale your deployment to add or remove routers from the router mesh. When you scale up the router mesh, a new pod is deployed with a router, which automatically connects to any other running routers.
-
-Procedure
-
-    Navigate to the Overview page.
-
-    Do one of the following:
-
-        To add routers to the mesh, click the up arrow next to the pods diagram.
-
-        A new pod is deployed, with a router running inside of it. The router automatically connects to each router in the mesh to maintain a full mesh topology.
-
-        To remove routes from the mesh, click the down arrow next to the pods diagram.
-
-        A pod is removed from the deployment, and its router is shut down. Any clients that were connected to the router are disconnected, but can fail over to any of the remaining routers in the mesh. 
+* For validation of your configurations of the 2 routers check resources
+** route-1  link:tests/test-4-resources/router-1-qdrouterd.conf[qdrouterd.conf]
+** router-2 link:tests/test-4-resources/router-2-qdrouterd.conf[qdrouterd.conf]
 
 
 
 
+Router-1-Console-Exposing-Router-Toology.png
 
-== STAGE 4:  AMQ Interonnect Topology Scenarios
 
-This is to showcase some features of the Interconnect
+=== Test Interconnect Scenario 5
 
-=== Install Router Type: Aggregator Router
+*Aim: Recreate the following Interconnect Topology link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#path_redundancy_and_temporal_decoupling[Path Redundancy and Temporal Decoupling]
+
+image:pics/amq-interconnect-path-redundancy-temp-decoupling-01.png["Path Redundancy and Temporal Decoupling",height=240] 
+
+---
+
+
+
+=== Test Interconnect Scenario 6
+
+*Aim: Recreate some of the Interconnect Topologies at link:https://developers.redhat.com/blog/2018/05/17/scaling-amq-7-brokers-with-amq-interconnect/[Scaling AMQ 7 Brokers with AMQ Interconnect] (Git Repo)
+
+
+* Install Router Type: Aggregator Router
 
 This router will manage the incoming and outgoing messages from other routers to the AMQ 7 HA cluster topology behind it.
 
-
-=== Install Router Type: Producer Router
+* Install Router Type: Producer Router
 
 This router will manage the incoming messages from producers to the aggregator router.
 
 
-=== Install Router Type: Consumer Router
+* Install Router Type: Consumer Router
 
 This router will manage the outgoing messages from the aggregator router to the consumer router.
+
+
+---
+
+
+
+
+
+== STAGE 4:  Scaling the router meshs
+
+You can scale your deployment to add or remove routers from the router mesh. When you scale up the router mesh, a new pod is deployed with a router, which automatically connects to any other running routers.
+
+* Procedure
+** Navigate to the Overview page.
+** Do one of the following:
+*** To add routers to the mesh, click the up arrow next to the pods diagram.
+*** A new pod is deployed, with a router running inside of it. The router automatically connects to each router in the mesh to maintain a full mesh topology.
+*** To remove routes from the mesh, click the down arrow next to the pods diagram.
+*** A pod is removed from the deployment, and its router is shut down. Any clients that were connected to the router are disconnected, but can fail over to any of the remaining routers in the mesh. 
+
+
+
+
 
 

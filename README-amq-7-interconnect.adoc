@@ -396,7 +396,7 @@ Facility *qdstat* shows on the router pod 2 *in connections* from the console an
 	*IMPORTANT*: the way this works is because both the consumer & producer are connected at the time and the *router-1* routes the message directly
 
 
-* Resulting Topology
+==== Resulting Topology
 
 	The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
 
@@ -473,7 +473,8 @@ image:pics/amq-interconnect-console-router-1-Topology-B.png["Topology Initial",h
 
 
 
-* Resulting Topology
+==== Results - Changing broker topologies
+
 ** The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
 
 image:pics/amq-interconnect-console-router-1-Topology-C.png["Topology 3 Brokers",height=240] 
@@ -599,7 +600,7 @@ image:pics/amq-interconnect-console-router-1-Topology-C.png["Topology 3 Brokers"
 
 
 
-* Resulting Topology
+==== Results - Changing broker topologies
 
 The topology in *router-1* web-console will now be showing the router and its console connected as well as the the 2 AMQ7 Brokers connected
 
@@ -724,12 +725,11 @@ Now create a mesh with autoLink (ie. links can exist before queue objects exist 
 ==== Result - Redundant Interconnect Topology
 
 * The outcome will be 2 routes which can be used to access the content of the *3 brokers* and the interconnect *router-1*
-* The topology created in the mesh will be image:pics/amq-interconnect-Routes-interconnect-1-brokers-3-consoles.png["Routes for Consoles",height=240] 
+* The topology in *router-1* web-console will be showing only the router and its console connected image:pics/TOPOLOGY-4.png["Topology Redundant",height=240] 
 * The console consolidates queues from all connected routers without need for multiple consoles, as seen here: image:pics/Router-1-Console-Exposing-Router-Toology.png["Routers",height=240] 
 * The *broker-c* console showing messages delivered to *dq2* accessible only via *router-2* when client is connecting to *router-1* image:pics/Broker-C-dq2-ConsoleView.png["dq2 messages",height=240]
 * Routers console showing the messages being delviered to address *dq2* via the POD for *router-2* image:pics/Routers-Delivery-View.png["dq2 messages",height=240]
 
-* The topology in *router-1* web-console will be showing only the router and its console connected image:pics/TOPOLOGY-4.png["Topology Redundant",height=240] 
 
 Facility *qdstat* shows on the *router-2* POD *in connections* from the console and then a *bi-directional* connection to *router-1* as well as to *broker-c*
 

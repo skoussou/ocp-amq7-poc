@@ -4,6 +4,12 @@ These activites are related to traditional, self-managed AMQ Brokers
 :toc::
 
 
+=== Access to RH Registry
+
+Directions: 
+* link: https://access.redhat.com/RegistryAuthentication[Red Hat Container Registry Authentication] (Using config.json)
+* link: https://access.redhat.com/solutions/3812291[How do I use an imagestreamsecret with redhat.registry.io] (Using credentials rather than json works just fine)
+
 
 == STAGE 1:  Install all necessary components (templates, images/streams)
 

@@ -2,20 +2,25 @@
 
 These are the activities related to installation of AMQ Brokers, AMQ Interconnect manually (ie. not provisioned as a service) and configurations for different topologies
 
+=== Access to RH Registry
+
+Directions: 
+* link: https://access.redhat.com/RegistryAuthentication[Red Hat Container Registry Authentication] (Using config.json)
+* link: https://access.redhat.com/solutions/3812291[How do I use an imagestreamsecret with redhat.registry.io] (Using credentials rather than json works just fine)
 
 Resources:
 
 * link:https://developers.redhat.com/blog/2018/05/17/scaling-amq-7-brokers-with-amq-interconnect/[Scaling AMQ 7 Brokers with AMQ Interconnect] (Git Repo)
 * link:https://www.youtube.com/watch?v=nVf5e97rvgQ[AMQ 7 and Microservices: Messaging for Everything] (Video)
-* AMQ 7 Interconnectors:  link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/using_amq_interconnect/#theory_of_operation[Theory of Operations] (Using Interconnect Guide)
-
+* AMQ 7 Interconnectors:  link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.3/html-single/using_amq_interconnect/#theory_of_operation[Theory of Operations] (Using Interconnect Guide)
 
 == STAGE 1:  Install all necessary components (templates, images/streams) and preps
 
 * Install amq-interconnect images
 
-	$ oc get imagestreamtag -n openshift | grep amq-interconnect-1.2-openshift
+	$ oc get imagestreamtag -n openshift | grep amq-interconnect
 
+	$ oc import-image amq7/amq-interconnect -n openshift --from=registry.redhat.io/amq7/amq-interconnect --confirm
 	$ oc import-image amq-interconnect-1.2-openshift:latest -n openshift --from=registry.access.redhat.com/amq-interconnect/amq-interconnect-1.2-openshift --confirm
 
 

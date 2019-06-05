@@ -31,14 +31,16 @@ oc replace --force -f https://raw.githubusercontent.com/jboss-container-images/j
 
 * Activity 2: Install AMQ Templates in namespace *openshift*
 
+** 7.2
 [source, bash]
 ----
 
-(the templates are now also available also under /amq-7-templates)
+(the templates are now also available also under /amq-7-templates/amq-broker)
 
 for template in amq-broker-72-basic.yaml \
- amq-broker-72-ssl.yaml \
+ amq-broker-73-ssl.yaml \
  amq-broker-72-custom.yaml \
+ amq-broker-72-persistence-clustered-controller.yaml
  amq-broker-72-persistence.yaml \
  amq-broker-72-persistence-ssl.yaml \
  amq-broker-72-persistence-clustered.yaml \
@@ -46,6 +48,25 @@ for template in amq-broker-72-basic.yaml \
  do
   oc replace --force -f \
  https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/72-1.1.GA/templates/${template} -n openshift
+  done
+----
+
+** 7.3
+[source, bash]
+----
+
+(the templates are now also available also under /amq-7-templates/amq-broker)
+
+for template in amq-broker-73-basic.yaml \
+ amq-broker-73-ssl.yaml \
+ amq-broker-73-custom.yaml \
+ amq-broker-73-persistence.yaml \
+ amq-broker-73-persistence-ssl.yaml \
+ amq-broker-73-persistence-clustered.yaml \
+ amq-broker-73-persistence-clustered-ssl.yaml;
+ do
+  oc replace --force -f \
+ https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/73-7.3.0.GA/templates/${template} -n openshift
   done
 ----
 

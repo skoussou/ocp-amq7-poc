@@ -1,0 +1,10 @@
+for template in amq-broker-73-basic.yaml \
+ amq-broker-73-ssl.yaml \
+ amq-broker-73-custom.yaml \
+ amq-broker-73-persistence.yaml \
+ amq-broker-73-persistence-ssl.yaml \
+ amq-broker-73-persistence-clustered.yaml \
+ amq-broker-73-persistence-clustered-ssl.yaml;
+ do
+ wget https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/73-7.3.0.GA/templates/${template} 
+  done

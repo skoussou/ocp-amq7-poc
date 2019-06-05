@@ -21,7 +21,6 @@ Resources:
 	$ oc get imagestreamtag -n openshift | grep amq-interconnect
 
 	$ oc import-image amq7/amq-interconnect -n openshift --from=registry.redhat.io/amq7/amq-interconnect --confirm
-	$ oc import-image amq-interconnect-1.2-openshift:latest -n openshift --from=registry.access.redhat.com/amq-interconnect/amq-interconnect-1.2-openshift --confirm
 
 
 * Insstall templates
@@ -29,17 +28,18 @@ Resources:
 	(the templates are now also available also under /amq-7-templates)
 
 	oc login -u system:admin
-	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-basic.yaml | oc create -f - -n openshift
-	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-tls-auth.yaml | oc create -f - -n openshift
-	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-11-dev/templates/amq-interconnect-1-sasldb-auth.yaml | oc create -f - -n openshift
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-1.3/templates/amq-interconnect-1-basic.yaml | oc create -f - -n openshift
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-1.3/templates/amq-interconnect-1-tls-auth.yaml | oc create -f - -n openshift
+	curl https://raw.githubusercontent.com/jboss-container-images/amq-interconnect-1-openshift-image/amq-interconnect-1.3/templates/amq-interconnect-1-sasldb-auth.yaml | oc create -f - -n openshift
+
 
 ** Installing/Using Secured Interconnectors link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform[Documentation here]. *We will be using basic*
 *** Prepare SSL certs (If you want to secure inter-router traffic, client traffic, or both,)
-*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#creating-secrets-for-tls-authentication-preparing[Documentation]
+*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.3/html-single/deploying_amq_interconnect_on_openshift_container_platform/#creating-secrets-for-tls-authentication-preparing[Documentation]
 
 *** Creating secrets for SASL authentication
 To authenticate clients against user name and password pairs stored in a SASL database, you must create a list containing the user names and passwords, and provide it to OpenShift as a secret. 
-*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.2/html-single/deploying_amq_interconnect_on_openshift_container_platform/#Creating-secrets-for-sasl-authentication-preparing[Documentation]
+*TODO*: Follow the link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.3/html-single/deploying_amq_interconnect_on_openshift_container_platform/#Creating-secrets-for-sasl-authentication-preparing[Documentation]
 
 
 
